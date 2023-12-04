@@ -9,6 +9,7 @@ A C# console app that uses managedblam to manipulate tags in the Halo Reach mod 
 
 ## TODO
 - Add more weapon variety per squad depending on the available enemies.
+- Get proper enemy count from squad cells instead of randomising.
 - Optimise and tidy up the main function.
 - Loop through each scenario file
 - Documentation
