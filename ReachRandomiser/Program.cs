@@ -194,6 +194,9 @@ namespace ReachTesting
                                 bool shouldSpawnHunter = rand.Next(0, 15) == 0;
                                 bool shouldSpawnEngineer = rand.Next(0, 15) == 0;
                                 bool shouldSpawnMule = rand.Next(0, 15) == 0;
+
+
+
                                 var enemies = cell.Fields.Where(x => x.DisplayName == "character type").FirstOrDefault();
                                 if (enemies != null)
                                 {
@@ -213,7 +216,6 @@ namespace ReachTesting
                                         {
                                             ((Bungie.Tags.TagFieldBlock)enemies).AddElement();
                                         }
-                                        //Set all enemies to hunter
                                         foreach (var element in ((Bungie.Tags.TagFieldBlock)enemies).Elements)
                                         {
                                             ((Bungie.Tags.TagFieldBlockIndex)element.Fields[1]).Value = (short)runtimeEnemyObjects[rand.Next(0, runtimeEnemyObjects.Count)].PaletteIndex;
@@ -277,6 +279,7 @@ namespace ReachTesting
                                     }
                                     else
                                     {
+                                        RemoveAllWeaponsOfCell(cell);
                                         var randomWeapon = runtimeWeapons[rand.Next(0, runtimeWeapons.Count)];
                                         randomWeapon.CompatibleEnemies.RemoveAll(o => o.Name.Contains("hunter"));
                                         randomWeapon.CompatibleEnemies.RemoveAll(o => o.Name.Contains("engineer"));
@@ -307,6 +310,9 @@ namespace ReachTesting
 
                                         //Randomise order of compatible enemies
                                         RemoveAllCharactersOfCell(cell);
+
+
+                                        List<string> EnemiesAdded = new List<string>();
 
 
                                         foreach (var compatibleEnemy in randomWeapon.CompatibleEnemies)
@@ -343,14 +349,40 @@ namespace ReachTesting
 
                                             tgb.Value = (short)compatibleEnemy.PaletteIndex;
 
-
-
-
-
-
-
+                                            EnemiesAdded.Add(compatibleEnemy.Name);
                                         }
 
+                                        //Find all other weapons that are compatible with the enemies added
+                                        var tempcompatibleWeapons = runtimeWeapons.Where(o => o.CompatibleEnemies.Any(x => EnemiesAdded.Contains(x.Name))).ToList();
+                                        var compatibleWeapons = tempcompatibleWeapons.ToList();
+                                        //Make sure that the weapons found are actually compatible with all the enemies
+                                        foreach (var weapon in tempcompatibleWeapons)
+                                        {
+                                            foreach (var enemy in EnemiesAdded)
+                                            {
+                                                if (!weapon.CompatibleEnemies.Any(x => x.Name == enemy))
+                                                {
+                                                    compatibleWeapons.Remove(weapon);
+                                                }
+                                            }
+                                        }
+
+                                        //Remove the weapon that was chosen
+                                        compatibleWeapons.Remove(randomWeapon);
+
+                                        //Randomise the order of the compatible weapons
+                                        compatibleWeapons = compatibleWeapons.OrderBy(x => rand.Next()).ToList();
+
+                                        int i = 0;
+                                        foreach(var weapon in compatibleWeapons)
+                                        {
+                                            if (i >= 4)
+                                            {
+                                                break;
+                                            }
+                                            AddWeaponToCell(cell, rand, weapon.PaletteIndex);
+                                            i++;
+                                        }
                                     }
 
 

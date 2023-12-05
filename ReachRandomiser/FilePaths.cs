@@ -278,6 +278,22 @@ namespace ReachTesting
             "ally",
             "civilian",
             "human",
+            "witness",
+            "fork",
+            "sq_court_cov_w1",
+            "unsc",
+            "crv_sbr",
+            "crv_sph",
+            "crv_ph",
+            "crv_cannon",
+            "crv_bsh",
+            "seraph",
+            "sabre",
+            "waf_sbr",
+            "waf_bsh",
+            "waf_sph",
+            "waf_ph",
+
             
         };
 

@@ -405,6 +405,36 @@ namespace ReachTesting
             }
         }
 
+        //Add weapon to a cell with palette index
+        public static void AddWeaponToCell(TagElement cell, Random rand, int PaletteIndex)
+        {
+            //Choose a random weapon for the cell
+            var weapon = cell.Fields.Where(x => x.DisplayName == "initial weapon").FirstOrDefault();
+            if (weapon != null)
+            {
+                //Check max elements
+                if (((TagFieldBlock)weapon).Elements.Count >= 4)
+                {
+                    return;
+                }
+
+                //Get Element count
+                var count = ((TagFieldBlock)weapon).Elements.Count;
+
+                //Add an element
+                ((TagFieldBlock)weapon).AddElement();
+
+                //Get weapon type field from elements[0]
+                var weaponType = ((Bungie.Tags.TagFieldBlock)weapon).Elements[count].Fields.Where(x => x.DisplayName == "weapon type").FirstOrDefault();
+                if (weaponType != null)
+                {
+                    //Set the weapon type to the random weapon shortblockindex
+                    ((TagFieldBlockIndex)weaponType).Value = (short)PaletteIndex;
+
+                }
+            }
+        }
+
         //Remove all weapons from cell with RemoveAllElements()
         public static void RemoveAllWeaponsOfCell(TagElement cell)
         {
