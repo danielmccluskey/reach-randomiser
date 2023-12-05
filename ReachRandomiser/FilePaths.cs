@@ -8,6 +8,20 @@ namespace ReachTesting
 {
     public static class FilePathsForReach
     {
+        public static List<string> LevelNames = new List<string>()
+        {
+            "m10",
+            "m20",
+            "m30",
+            "m35",
+            "m45",
+            "m50",
+            "m52",
+            "m60",
+            "m70",
+            "m70_bonus",
+
+        };
         public static List<string> SquadTemplates = new List<string>()
         {
             @"ai\squad_templates\sq_camp_banshee_1",
