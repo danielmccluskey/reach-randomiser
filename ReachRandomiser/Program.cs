@@ -17,6 +17,8 @@ namespace ReachTesting
         static void Main(string[] args)
         {
             Random rand = new Random();
+
+            
             ManagedBlamCrashCallback del = info => {
 
             };
@@ -152,8 +154,23 @@ namespace ReachTesting
                         //Don't change the squad if it contains any of the keywords due to story progression
                         if (skipKeyWords.Any(x => squad.ElementHeaderText.ToLower().Contains(x.ToLower())))
                         {
+                            Console.WriteLine("Skipping squad: " + squad.ElementHeaderText);
                             continue;
                         }
+
+                        bool skipSpecialEnemyTypes = false;
+
+                        //Check if the squad contains any of the special enemy types
+                        if(skipSpecialEnemySquads.Any(x => squad.ElementHeaderText.ToLower().Contains(x.ToLower())))
+                        {
+                            skipSpecialEnemyTypes = true;
+                            Console.WriteLine("Skipping special enemy type for squad: " + squad.ElementHeaderText);
+                        }
+
+
+
+
+
                         string template = HasTemplate(squad);
                         int enemyCount = 0;
                         bool hasVehicle = false;
@@ -162,6 +179,7 @@ namespace ReachTesting
                             //Check if the template name is in the skip list
                             if (skipKeyWords.Any(x => template.ToLower().Contains(x.ToLower())))
                             {
+                                Console.WriteLine("Skipping template: " + template);
                                 continue;
                             }
 
@@ -195,13 +213,28 @@ namespace ReachTesting
                                 bool shouldSpawnEngineer = rand.Next(0, 15) == 0;
                                 bool shouldSpawnMule = rand.Next(0, 15) == 0;
 
+                                //Get the normal difficulty count
+                                var normalDiffCountOfCell = GetNormalDiffCountOfCell(cell);
+                                if(normalDiffCountOfCell == 0)
+                                {
+                                    if(!string.IsNullOrEmpty(template))
+                                    {
+                                        normalDiffCountOfCell = enemyCount;
+                                    }
+                                    else
+                                    {
+                                        normalDiffCountOfCell = rand.Next(1, 4);
+                                    }
+                                }
+
+
 
 
                                 var enemies = cell.Fields.Where(x => x.DisplayName == "character type").FirstOrDefault();
                                 if (enemies != null)
                                 {
 
-                                    if ((shouldHaveVehicle && !hasVehicle) || hasVehicle)
+                                    if ((shouldHaveVehicle && !hasVehicle &&  !skipSpecialEnemyTypes) || (hasVehicle))
                                     {
                                         RemoveAllCharactersOfCell(cell);
                                         RemoveAllWeaponsOfCell(cell);
@@ -209,7 +242,7 @@ namespace ReachTesting
                                         //Set the weapon to the plasma pistol
                                         SetWeaponOfCell(cell, rand, runtimeWeapons.Where(o => o.Name == "plasma_pistol").FirstOrDefault().PaletteIndex);
                                         //Set the enemy count to 1
-                                        SetNormalDiffCountOfCell(cell, 1);
+                                        SetNormalDiffCountOfCell(cell, normalDiffCountOfCell);
 
                                         //Check if there are elements, if not add one
                                         if (((Bungie.Tags.TagFieldBlock)enemies).Elements.Count == 0)
@@ -228,11 +261,19 @@ namespace ReachTesting
                                         }
 
                                     }
-                                    else if (shouldSpawnMule)
+                                    else if (shouldSpawnMule && !skipSpecialEnemyTypes)
                                     {
                                         RemoveAllCharactersOfCell(cell);
                                         RemoveAllWeaponsOfCell(cell);
-                                        SetNormalDiffCountOfCell(cell, rand.Next(1, 4));
+                                        if(normalDiffCountOfCell == 0)
+                                        {
+                                            SetNormalDiffCountOfCell(cell, rand.Next(1, 4));
+
+                                        }
+                                        else
+                                        {
+                                            SetNormalDiffCountOfCell(cell, normalDiffCountOfCell);
+                                        }
                                         //Check if there are elements, if not add one
                                         if (((Bungie.Tags.TagFieldBlock)enemies).Elements.Count == 0)
                                         {
@@ -244,11 +285,18 @@ namespace ReachTesting
                                             ((Bungie.Tags.TagFieldBlockIndex)element.Fields[1]).Value = (short)runtimeEnemyObjects.Where(o => o.Name.Contains("mule")).FirstOrDefault().PaletteIndex;
                                         }
                                     }
-                                    else if (shouldSpawnHunter)
+                                    else if (shouldSpawnHunter && !skipSpecialEnemyTypes)
                                     {
                                         RemoveAllCharactersOfCell(cell);
                                         RemoveAllWeaponsOfCell(cell);
-                                        SetNormalDiffCountOfCell(cell, rand.Next(1, 4));
+                                        if (normalDiffCountOfCell == 0)
+                                        {
+                                            SetNormalDiffCountOfCell(cell, rand.Next(1, 4));
+                                        }
+                                        else
+                                        {
+                                            SetNormalDiffCountOfCell(cell, normalDiffCountOfCell);
+                                        }
                                         //Check if there are elements, if not add one
                                         if (((Bungie.Tags.TagFieldBlock)enemies).Elements.Count == 0)
                                         {
@@ -260,11 +308,19 @@ namespace ReachTesting
                                             ((Bungie.Tags.TagFieldBlockIndex)element.Fields[1]).Value = (short)runtimeEnemyObjects.Where(o => o.Name.Contains("hunter")).FirstOrDefault().PaletteIndex;
                                         }
                                     }
-                                    else if (shouldSpawnEngineer)
+                                    else if (shouldSpawnEngineer && !skipSpecialEnemyTypes)
                                     {
                                         RemoveAllCharactersOfCell(cell);
                                         RemoveAllWeaponsOfCell(cell);
-                                        SetNormalDiffCountOfCell(cell, 1);
+                                        if (normalDiffCountOfCell == 0)
+                                        {
+                                            SetNormalDiffCountOfCell(cell, rand.Next(1, 4));
+
+                                        }
+                                        else
+                                        {
+                                            SetNormalDiffCountOfCell(cell, normalDiffCountOfCell);
+                                        }
 
                                         //Check if there are elements, if not add one
                                         if (((Bungie.Tags.TagFieldBlock)enemies).Elements.Count == 0)
@@ -300,7 +356,17 @@ namespace ReachTesting
                                         }
                                         else
                                         {
-                                            enemyCountForCell = rand.Next(1, 4);
+                                            if (normalDiffCountOfCell == 0)
+                                            {
+                                                //Couldn't find the enemy count so randomise it
+                                                enemyCountForCell = rand.Next(1, 4);
+
+                                            }
+                                            else
+                                            {
+                                                //Set the enemy count to the normal difficulty count
+                                                enemyCountForCell = normalDiffCountOfCell;
+                                            }
                                         }
 
                                         SetNormalDiffCountOfCell(cell, enemyCountForCell);

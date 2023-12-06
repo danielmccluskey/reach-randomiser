@@ -216,15 +216,15 @@ namespace ReachTesting
             //new WeaponDetails{Name = "unarmed", Path = @"objects\weapons\melee\unarmed\unarmed", CompatibleEnemies = enemyObjectPaths.Where(o => o.Name.Contains("engineer")).ToList() },
             new WeaponDetails{Name = "magnum", Path = @"objects\weapons\pistol\magnum\magnum", CompatibleEnemies = enemyObjectPaths.Where(o => !o.Name.Contains("bugger")).ToList() },
             new WeaponDetails{Name = "needler", Path = @"objects\weapons\pistol\needler\needler", CompatibleEnemies = enemyObjectPaths.Where(o => !o.Name.Contains("bugger") && !o.Name.Contains("brute")).ToList()  },
-            new WeaponDetails{Name = "plasma_pistol", Path = @"objects\weapons\pistol\plasma_pistol\plasma_pistol", CompatibleEnemies = enemyObjectPaths  },
+            new WeaponDetails{Name = "plasma_pistol", Path = @"objects\weapons\pistol\plasma_pistol\plasma_pistol", CompatibleEnemies = enemyObjectPaths.Where(o => !o.Name.Contains("brute")).ToList() },
             new WeaponDetails{Name = "assault_rifle", Path = @"objects\weapons\rifle\assault_rifle\assault_rifle", CompatibleEnemies = enemyObjectPaths.Where(o => !o.Name.Contains("bugger")).ToList() },
             new WeaponDetails{Name = "concussion_rifle", Path = @"objects\weapons\rifle\concussion_rifle\concussion_rifle", CompatibleEnemies = enemyObjectPaths.Where(o => !o.Name.Contains("bugger")).ToList() },
             new WeaponDetails{Name = "dmr", Path = @"objects\weapons\rifle\dmr\dmr", CompatibleEnemies = enemyObjectPaths.Where(o => !o.Name.Contains("bugger")).ToList() },
             new WeaponDetails{Name = "focus_rifle", Path = @"objects\weapons\rifle\focus_rifle\focus_rifle", CompatibleEnemies = enemyObjectPaths.Where(o => o.Name.Contains("elite") || o.Name.Contains("skirmisher")).ToList() },
             new WeaponDetails{Name = "grenade_launcher", Path = @"objects\weapons\rifle\grenade_launcher\grenade_launcher", CompatibleEnemies = enemyObjectPaths },
             new WeaponDetails{Name = "needle_rifle", Path = @"objects\weapons\rifle\needle_rifle\needle_rifle", CompatibleEnemies = enemyObjectPaths.Where(o => ! o.Name.Contains("bugger")).ToList() },
-            new WeaponDetails{Name = "plasma_repeater", Path = @"objects\weapons\rifle\plasma_repeater\plasma_repeater", CompatibleEnemies = enemyObjectPaths.Where(o => ! o.Name.Contains("bugger")).ToList() },
-            new WeaponDetails{Name = "plasma_rifle", Path = @"objects\weapons\rifle\plasma_rifle\plasma_rifle", CompatibleEnemies = enemyObjectPaths.Where(o => !o.Name.Contains("bugger")).ToList() },//Jackals, grunts, elites, skirms
+            new WeaponDetails{Name = "plasma_repeater", Path = @"objects\weapons\rifle\plasma_repeater\plasma_repeater", CompatibleEnemies = enemyObjectPaths.Where(o => ! o.Name.Contains("bugger") && !o.Name.Contains("brute")).ToList() },
+            new WeaponDetails{Name = "plasma_rifle", Path = @"objects\weapons\rifle\plasma_rifle\plasma_rifle", CompatibleEnemies = enemyObjectPaths.Where(o => !o.Name.Contains("bugger") && !o.Name.Contains("brute")).ToList() },//Jackals, grunts, elites, skirms
             new WeaponDetails{Name = "shotgun", Path = @"objects\weapons\rifle\shotgun\shotgun", CompatibleEnemies = enemyObjectPaths.Where(o => !o.Name.Contains("bugger")).ToList() },
             new WeaponDetails{Name = "sniper_rifle", Path = @"objects\weapons\rifle\sniper_rifle\sniper_rifle", CompatibleEnemies = enemyObjectPaths.Where(o => !o.Name.Contains("bugger")).ToList() },
             new WeaponDetails{Name = "spike_rifle", Path = @"objects\weapons\rifle\spike_rifle\spike_rifle", CompatibleEnemies = enemyObjectPaths.Where(o => !o.Name.Contains("bugger")).ToList() },
@@ -293,8 +293,50 @@ namespace ReachTesting
             "waf_bsh",
             "waf_sph",
             "waf_ph",
+            "sq_cov_bch_ds",
+            "odst"
 
-            
+
+        };
+
+        public static List<string> skipSpecialEnemySquads = new List<string>()
+        {
+            "3kiva03_cov_drop01a",
+            "3kiva03_cov_drop01b",
+            "3kiva03_cov_drop01c",
+            "3kiva03_cov_drop02a",
+            "3kiva03_cov_drop02b",
+            "3kiva03_cov_drop02c",
+            "3kiva03_cov_drop02a_coop",
+            "3kiva02_cov_drop01a",
+            "3kiva02_cov_drop01b",
+            "3kiva02_cov_drop01c",
+            "3kiva02_cov_drop02a",
+            "3kiva02_cov_drop02b",
+            "3kiva02_cov_drop02c",
+            "3kiva02_cov_drop02a_coop",
+            "atrium_cov_counter_inf0",
+            "atrium_cov_counter_inf1",
+            "atrium_cov_counter_inf2",
+            "atrium_cov_counter_inf3",
+            "atrium_cov_concussion_inf0",
+            "atrium_cov_rangers_inf0",
+            "atrium_cov_rangers_inf1",
+            "atrium_cov_captain0",
+            "atrium_cov_captain1",
+            "sq_platform_w0_1",
+            "sq_platform_w0_2",
+            "sq_platform_w0_3",
+            "sq_platform_w0_4",
+            "sq_platform_w1_1",
+            "sq_platform_w1_2",
+            "sq_platform_w1_3",
+            "sq_platform_w1_4a",
+            "sq_platform_w1_4b",
+            "sq_platform_w2_1",
+            "sq_platform_w2_2",
+            "sq_platform_w2_3",
+
         };
 
 

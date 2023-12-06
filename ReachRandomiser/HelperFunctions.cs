@@ -459,6 +459,20 @@ namespace ReachTesting
 
         }
 
+        //Get normal diff count of a cell
+        public static int GetNormalDiffCountOfCell(TagElement cell)
+        {
+            //Find normal diff count
+            var normalDiffCount = cell.Fields.Where(x => x.DisplayName == "normal diff count").FirstOrDefault();
+            if (normalDiffCount != null)
+            {
+                //Set the normal diff count to the enemy count
+                return (int)((TagFieldElementInteger)normalDiffCount).Data;
+            }
+            return 0;
+
+        }
+
 
         //Remove all characters from cell with RemoveAllElements()
         public static void RemoveAllCharactersOfCell(TagElement cell)
