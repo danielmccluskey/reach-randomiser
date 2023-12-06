@@ -442,10 +442,6 @@ namespace ReachTesting
                                         int i = 0;
                                         foreach(var weapon in compatibleWeapons)
                                         {
-                                            if (i >= 8)
-                                            {
-                                                break;
-                                            }
                                             AddWeaponToCell(cell, rand, weapon.PaletteIndex);
                                             i++;
                                         }

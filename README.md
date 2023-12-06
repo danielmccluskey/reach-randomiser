@@ -2,15 +2,15 @@
 <a href="https://twitter.com/danosw_">
 <img src="https://img.shields.io/twitter/follow/danosw_?logo=twitter&style=for-the-badge" alt="danosw_" />
 </a>
+
 # Reach-Randomiser
 
 A dynamic C# console application leveraging managedblam to modify tags in Halo Reach's mod tools, introducing a new dimension of unpredictability by randomizing enemies and their weapons.
 
 # Use of this tool requires knowledge of the Halo Reach Editing Kit
+
 You can use a pre-generated version of this mod using the steam workshop!
 [Steam workshop link](https://steamcommunity.com/sharedfiles/filedetails/?id=3106219376)
-
-
 
 ## Program Steps
 
@@ -22,8 +22,7 @@ You can use a pre-generated version of this mod using the steam workshop!
 - Get all the squads and loop through each of their cells.
   - If it has a template, it removes it.
   - Generates random weapons, characters and vehicles for the cells whilst retaining the original enemy count.
-
-
+  - Your average Squad cell which is not a Guta/Hunter/Engineer or Vehicle will have a selection of 8 different enemies and up to 5 different weapons that they can spawn with.
 
 ## Prerequisites
 

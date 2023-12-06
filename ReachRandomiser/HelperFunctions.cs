@@ -413,7 +413,7 @@ namespace ReachTesting
             if (weapon != null)
             {
                 //Check max elements
-                if (((TagFieldBlock)weapon).Elements.Count >= 8)
+                if (((TagFieldBlock)weapon).Elements.Count >= 5)
                 {
                     return;
                 }
