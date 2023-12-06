@@ -1,3 +1,5 @@
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
 # Reach-Randomiser
 
 A dynamic C# console application leveraging managedblam to modify tags in Halo Reach's mod tools, introducing a new dimension of unpredictability by randomizing enemies and their weapons.
