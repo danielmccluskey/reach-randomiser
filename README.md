@@ -1,5 +1,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-
+<a href="https://twitter.com/danosw_">
+<img src="https://img.shields.io/twitter/follow/danosw_?logo=twitter&style=for-the-badge" alt="danosw_" />
+</a>
 # Reach-Randomiser
 
 A dynamic C# console application leveraging managedblam to modify tags in Halo Reach's mod tools, introducing a new dimension of unpredictability by randomizing enemies and their weapons.
@@ -8,9 +10,7 @@ A dynamic C# console application leveraging managedblam to modify tags in Halo R
 You can use a pre-generated version of this mod using the steam workshop!
 [Steam workshop link](https://steamcommunity.com/sharedfiles/filedetails/?id=3106219376)
 
-<a href="https://twitter.com/danosw_">
-<img src="https://img.shields.io/twitter/follow/danosw_?logo=twitter&style=for-the-badge" alt="danosw_" />
-</a>
+
 
 ## Program Steps
 
