@@ -49,6 +49,7 @@ Any contributions you make are **greatly appreciated**.
 ## Acknowledgments
 
 - A thanks to the HaloMods Discord community and the contributors at [c20.reclaimers.net](https://c20.reclaimers.net) for their brilliant documentation.
+- A shoutout for [HaloRuns](https://haloruns.com) speedrun community for enabling my Halo addiction.
 - This project would not be possible without it.
 
 ---
