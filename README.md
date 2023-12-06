@@ -4,6 +4,8 @@
 
 A dynamic C# console application leveraging managedblam to modify tags in Halo Reach's mod tools, introducing a new dimension of unpredictability by randomizing enemies and their weapons.
 
+# Use of this tool requires knowledge of the Halo Reach Editing Kit
+You can use a pre-generated version of this mod using the steam workshop!
 [Steam workshop link](https://steamcommunity.com/sharedfiles/filedetails/?id=3106219376)
 
 <a href="https://twitter.com/danosw_">
