@@ -6,11 +6,18 @@ A dynamic C# console application leveraging managedblam to modify tags in Halo R
 <img src="https://img.shields.io/twitter/follow/danosw_?logo=twitter&style=for-the-badge" alt="danosw_" />
 </a>
 
-## Features
+## Program Steps
 
-- **Randomization Engine**: Alters enemy types and their weaponry in Halo Reach, ensuring a unique gameplay experience in every run.
-- **Intuitive Interface**: Easy-to-use console application for seamless mod management.
-- **Customizable Paths**: Modify the default path to your Halo Reach Editing Kit (HREK) installation as per your setup.
+- Load the scenario files e.g. m10, m20, m30
+- Add all vehicles, characters and weapons to each scenarios palette.
+  - For weapons and vehicles, this is also done on the scenarios resource files e.g. m10/resources/m10.scenario_vehicles_resource
+- Loop through the designer zones which are used to load resources at specific points in the level to save memory on initial load.
+  - Without this, some enemies, weapons and vehicles would not spawn until you got half way through the level.
+- Get all the squads and loop through each of their cells.
+  - If it has a template, it removes it.
+  - Generates random weapons, characters and vehicles for the cells whilst retaining the original enemy count.
+
+
 
 ## Prerequisites
 
