@@ -1,6 +1,6 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 <a href="https://twitter.com/danosw_">
-<img src="https://img.shields.io/twitter/follow/danosw_?logo=twitter&style=for-the-badge" alt="danosw_" />
+![X (formerly Twitter) Follow](https://img.shields.io/twitter/follow/danosw_)
 </a>
 
 # Reach-Randomiser
