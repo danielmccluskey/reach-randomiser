@@ -23,6 +23,32 @@ namespace ReachTesting
             return null;
         }
 
+        //Get Equipment from a TagFile, return a tagfield
+        public static TagField GetEquipment(TagFile tagFile)
+        {
+            foreach (var field in tagFile.Fields)
+            {
+                if (field.DisplayName == "equipments")
+                {
+                    return field;
+                }
+            }
+            return null;
+        }
+
+        //Get Weapons from a TagFile, return a tagfield
+        public static TagField GetWeapons(TagFile tagFile)
+        {
+            foreach (var field in tagFile.Fields)
+            {
+                if (field.DisplayName == "weapons")
+                {
+                    return field;
+                }
+            }
+            return null;
+        }
+
         //Get Vehicle Palette from a TagFile, return a tagfield
         public static TagFieldBlock GetVehiclePalette(TagFile tagFile)
         {
@@ -54,6 +80,19 @@ namespace ReachTesting
             foreach (var field in tagFile.Fields)
             {
                 if (field.DisplayName.Contains("weapon palette"))
+                {
+                    return (TagFieldBlock)field;
+                }
+            }
+            return null;
+        }
+
+        //Get Equipment Palette from a TagFile, return a tagfield
+        public static TagFieldBlock GeEquipmentPalette(TagFile tagFile)
+        {
+            foreach (var field in tagFile.Fields)
+            {
+                if (field.DisplayName.Contains("equipment palette"))
                 {
                     return (TagFieldBlock)field;
                 }
@@ -202,6 +241,55 @@ namespace ReachTesting
                 }
             }
         }
+
+
+        //Add equipment to a palette
+        public static void EquipmentToPalette(TagField tagField, List<EquipmentDetails> equipmentList)
+        {
+            //Get the elements of the field
+            var tagFieldBlock = (Bungie.Tags.TagFieldBlock)tagField;
+            foreach (var EquipmentType in equipmentList)
+            {
+                bool found = false;
+                foreach (var element in tagFieldBlock.Elements)
+                {
+                    if (element.ElementHeaderText.ToLower().Contains(EquipmentType.Name.ToLower()))
+                    {
+                        found = true;
+                        break;
+                    }
+                }
+
+                if (!found)
+                {
+                    //Get the count of the elements
+                    var count = tagFieldBlock.Elements.Count;
+                    tagFieldBlock.AddElement();
+
+                    //Get the last element
+                    var tag = ((Bungie.Tags.TagFieldBlockElement)tagFieldBlock.Elements[count]);
+                    var tgb = (Bungie.Tags.TagFieldReference)tag.Fields[0];
+
+                    tgb.Path = Bungie.Tags.TagPath.FromPathAndType(EquipmentType.Path, "eqip");
+                    //Add the not found element
+                }
+            }
+            //Loop through and set the palette index
+            foreach (var element in tagFieldBlock.Elements)
+            {
+                foreach (var EquipmentType in equipmentList)
+                {
+                    if (element.ElementHeaderText.ToLower() == EquipmentType.Name.ToLower())
+                    {
+                        EquipmentType.PaletteIndex = element.ElementIndex;
+                        break;
+                    }
+                }
+            }
+        }
+
+
+       
 
         //Check if a squad element has a template
         public static string HasTemplate(TagElement tagElement)
@@ -378,6 +466,67 @@ namespace ReachTesting
             }
             return false;
 
+        }
+
+
+         //Set the weapon type of a weapon placed in the world (not weapon crates)
+        public static void SetWeapon(TagElement weapon, Random rand, int PaletteIndex)
+        {
+            //Get weapon type field from elements[0]
+            var weaponType = ((Bungie.Tags.TagElement)weapon).Fields.Where(x => x.DisplayName == "type").FirstOrDefault();
+            if (weaponType != null)
+            {
+                //Set the weapon type to the random weapon shortblockindex
+                ((TagFieldBlockIndex)weaponType).Value = (short)PaletteIndex;
+
+            }
+            //clear weapon ammo so it goes to default values
+            TagFieldStruct weaponData;
+            weaponData = (TagFieldStruct)((Bungie.Tags.TagElement)weapon).Fields.Where(x => x.DisplayName == "weapon data").FirstOrDefault();
+            if (weaponData != null)
+            {
+                var roundsLeft = ((Bungie.Tags.TagElement)weaponData.Elements.First()).Fields.Where(x => x.DisplayName == "rounds left").FirstOrDefault();
+                if (roundsLeft != null)
+                {
+                    ((TagFieldElementInteger)roundsLeft).Data = 0;
+                }
+                else
+                {
+                    Console.WriteLine("rounds left not found");
+                }
+                var roundsLoaded = ((Bungie.Tags.TagElement)weaponData.Elements.First()).Fields.Where(x => x.DisplayName == "rounds loaded").FirstOrDefault();
+                if (roundsLoaded != null)
+                {
+                    ((TagFieldElementInteger)roundsLoaded).Data = 0;
+                }
+            }
+        }
+
+        //Set the equipment type of equipment in the world (not equipment crates)
+        public static void SetEquipment(TagElement equipment, Random rand, int PaletteIndex)
+        {
+            //Get equipment type field from elements[0]
+            var equipmentType = ((Bungie.Tags.TagElement)equipment).Fields.Where(x => x.DisplayName == "type").FirstOrDefault();
+            if (equipmentType != null)
+            {
+                
+                //Set the equipment type to the random equipment shortblockindex
+                ((TagFieldBlockIndex)equipmentType).Value = (short)PaletteIndex;
+
+            }
+        }
+
+        //Get the equipment type palette index of the equipment
+        public static int GetEquipmentIndex(TagElement equipment)
+        {
+            //Get equipment type field from elements[0]
+            var equipmentType = ((Bungie.Tags.TagElement)equipment).Fields.Where(x => x.DisplayName == "type").FirstOrDefault();
+            if (equipmentType != null)
+            {
+                //Get the equipment type
+                return ((TagFieldBlockIndex)equipmentType).Value;
+            }
+            return -1;
         }
 
         //Set the initial weapon of a cell with palette index

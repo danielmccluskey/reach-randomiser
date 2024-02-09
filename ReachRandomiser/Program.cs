@@ -27,7 +27,7 @@ namespace ReachTesting
             List<EnemyObjectPaths> runtimeGhostEnemyObjects = FilePathsForReach.ghostenemyObjectPaths.ToList();
             List<EnemyObjectPaths> runtimeWraithEnemyObjects = FilePathsForReach.wraithenemyObjectPaths.ToList();
             List<WeaponDetails> runtimeWeapons = FilePathsForReach.weapons.ToList();
-
+            List<EquipmentDetails> runtimeEquipment = FilePathsForReach.equipments.ToList();
             List<VehicleObjectPaths> runtimeVehicleObjectPaths = FilePathsForReach.vehicleObjectPaths.ToList();
             var param = new ManagedBlamStartupParameters();
             Bungie.ManagedBlamSystem.Start(@"C:\Program Files (x86)\Steam\steamapps\common\HREK", del, param);
@@ -74,12 +74,58 @@ namespace ReachTesting
                         {
                             AddWeaponsToPalette(newWeaponPalette, runtimeWeapons);
                         }
+                        
+                        //Randomize weapons (not ones held by ai)
+                        TagField weapons = GetWeapons(secondaryPalette);
+                        if (weapons == null)
+                        {
+                            Console.WriteLine("Weapons is null");
+                            return;
+                        }
+                        foreach (var weapon in ((Bungie.Tags.TagFieldBlock)weapons).Elements)
+                        {
+                            var randomWeapon = runtimeWeapons[rand.Next(0, runtimeWeapons.Count)];
+                            SetWeapon(weapon, rand, randomWeapon.PaletteIndex);
+                        }
+                        
 
                         secondaryPalette.Save();
 
                     }
+                    
+                    var equipmentfile = Bungie.Tags.TagPath.FromPathAndType(levelpath2, "*qip");
+                    using (var secondaryPalette = new Bungie.Tags.TagFile(equipmentfile))
+                    {
+                        var newEquipmentPalette = secondaryPalette.Fields.Where(x => x.DisplayName.Contains("equipment palette")).FirstOrDefault();
+                        if (newEquipmentPalette != null)
+                        {
+                            EquipmentToPalette(newEquipmentPalette, runtimeEquipment);
+                        }
+                        else
+                        {
+                            Console.WriteLine("Equipment Palette not found");
+                        }
 
-
+                        //Randomize equipments (not ones held by ai)
+                        TagField equipments = GetEquipment(secondaryPalette);
+                        if (equipments == null)
+                        {
+                            Console.WriteLine("Equipments is null");
+                            return;
+                        }
+                        foreach (var equipment in ((Bungie.Tags.TagFieldBlock)equipments).Elements)
+                        {
+                            //only randomize armor abilities to other armor abilities
+                            if (runtimeEquipment.Any(x => x.PaletteIndex == GetEquipmentIndex(equipment)))
+                            {
+                                var randomEquipment = runtimeEquipment[rand.Next(0, runtimeEquipment.Count)];
+                                SetEquipment(equipment, rand, randomEquipment.PaletteIndex);
+                            }
+                        }
+                        secondaryPalette.Save();
+                    }
+                    
+                    
 
                     //Get the second weapon palette
 
@@ -132,15 +178,20 @@ namespace ReachTesting
                     {
                         //Get fields Block:weapon, Block:character, Block:vehicle
                         var weapon = designerZone.Fields.Where(x => x.FieldPathWithoutIndexes.Contains("Block:weapon")).FirstOrDefault();
+                        var equipment = designerZone.Fields.Where(x => x.FieldPathWithoutIndexes.Contains("Block:equipment")).FirstOrDefault();
                         var character = designerZone.Fields.Where(x => x.FieldPathWithoutIndexes.Contains("Block:character")).FirstOrDefault();
                         var vehicle = designerZone.Fields.Where(x => x.FieldPathWithoutIndexes.Contains("Block:vehicle")).FirstOrDefault();
                         ((Bungie.Tags.TagFieldBlock)weapon).RemoveAllElements();
+                        ((Bungie.Tags.TagFieldBlock)equipment).RemoveAllElements();
                         ((Bungie.Tags.TagFieldBlock)character).RemoveAllElements();
                         ((Bungie.Tags.TagFieldBlock)vehicle).RemoveAllElements();
 
 
 
                     }
+
+                    
+
                     TagField squads = GetSquads(tagFile);
                     if (squads == null)
                     {
@@ -208,10 +259,10 @@ namespace ReachTesting
                             foreach (var cell in ((Bungie.Tags.TagFieldBlock)cells).Elements)
                             {
                                 //0.1 chance to have a vehicle
-                                bool shouldHaveVehicle = rand.Next(0, 15) == 0;
-                                bool shouldSpawnHunter = rand.Next(0, 15) == 0;
-                                bool shouldSpawnEngineer = rand.Next(0, 15) == 0;
-                                bool shouldSpawnMule = rand.Next(0, 15) == 0;
+                                bool shouldHaveVehicle = rand.Next(0, 30) == 0;
+                                bool shouldSpawnHunter = rand.Next(0, 20) == 0;
+                                bool shouldSpawnEngineer = rand.Next(0, 20) == 0;
+                                bool shouldSpawnMule = rand.Next(0, 80) == 0;
 
                                 //Get the normal difficulty count
                                 var normalDiffCountOfCell = GetNormalDiffCountOfCell(cell);
@@ -399,7 +450,7 @@ namespace ReachTesting
                                             //Get the count of the elements
                                             var count = enemyElements.Elements.Count;
                                             //Max enemies in a cell is 8
-                                            if (count >= 8)
+                                            if (count >= 7)
                                             {
                                                 break;
                                             }

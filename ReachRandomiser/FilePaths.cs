@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Security;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -129,6 +131,14 @@ namespace ReachTesting
             public List<EnemyObjectPaths> CompatibleEnemies { get; set; } = new List<EnemyObjectPaths>();
         }
 
+        public class EquipmentDetails
+        {
+            public string Name { get; set; }
+            public string Path { get; set; }
+
+            public int PaletteIndex { get; set; } = -1;
+        }
+
         public class EnemyObjectPaths
         {
             public string Name { get; set; }
@@ -237,6 +247,17 @@ namespace ReachTesting
 
         };
 
+        public static List<EquipmentDetails> equipments = new List<EquipmentDetails>()
+        {
+            new EquipmentDetails{Name = "active_camo", Path = @"objects\equipment\active_camouflage\active_camouflage"},
+            new EquipmentDetails{Name = "armor_lockup", Path = @"objects\equipment\armor_lockup\armor_lockup"},
+            new EquipmentDetails{Name = "drop_shield", Path = @"objects\equipment\drop_shield\drop_shield"},
+            new EquipmentDetails{Name = "evade", Path = @"objects\equipment\evade\evade"},
+            new EquipmentDetails{Name = "hologram", Path = @"objects\equipment\hologram\hologram"},
+            new EquipmentDetails{Name = "jet_pack", Path = @"objects\equipment\jet_pack\jet_pack"},
+            new EquipmentDetails{Name = "sprint", Path = @"objects\equipment\sprint\sprint"},
+        };
+
         public static List<VehicleObjectPaths> vehicleObjectPaths = new List<VehicleObjectPaths>()
             {
                 new VehicleObjectPaths{Name = "banshee", Path =  @"objects\vehicles\covenant\banshee\banshee" },
@@ -338,7 +359,6 @@ namespace ReachTesting
             "sq_platform_w2_3",
 
         };
-
 
     }
 }
