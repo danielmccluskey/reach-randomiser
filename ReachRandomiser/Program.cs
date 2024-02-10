@@ -28,6 +28,9 @@ namespace ReachTesting
             List<EnemyObjectPaths> runtimeWraithEnemyObjects = FilePathsForReach.wraithenemyObjectPaths.ToList();
             List<WeaponDetails> runtimeWeapons = FilePathsForReach.weapons.ToList();
             List<EquipmentDetails> runtimeEquipment = FilePathsForReach.equipments.ToList();
+            List<VariantList> runtimeScenery = FilePathsForReach.SceneryVariants.ToList();
+            List<VariantList> runtimeCrates = FilePathsForReach.CrateVariants.ToList();
+
             List<VehicleObjectPaths> runtimeVehicleObjectPaths = FilePathsForReach.vehicleObjectPaths.ToList();
             var param = new ManagedBlamStartupParameters();
             Bungie.ManagedBlamSystem.Start(@"C:\Program Files (x86)\Steam\steamapps\common\HREK", del, param);
@@ -42,17 +45,11 @@ namespace ReachTesting
                 string levelpath = @"levels\solo\" + levelname + @"\" + levelname;
                 string levelpath2 = @"levels\solo\" + levelname + @"\resources\" + levelname;
 
-
-
                 // e.g. G:\SteamLibrary\steamapps\common\HREK
 
                 var test_path = Bungie.Tags.TagPath.FromPathAndType(levelpath, "scnr*");
                 using (var tagFile = new Bungie.Tags.TagFile(test_path))
                 {
-
-
-
-
                     var vehiclefile = Bungie.Tags.TagPath.FromPathAndType(levelpath2, "*ehi");
                     using (var secondaryPalette = new Bungie.Tags.TagFile(vehiclefile))
                     {
@@ -126,6 +123,72 @@ namespace ReachTesting
                     }
                     
                     
+                    var sceneryfile = Bungie.Tags.TagPath.FromPathAndType(levelpath2, "*cen");
+                    using (var secondaryPalette = new Bungie.Tags.TagFile(sceneryfile))
+                    {
+                        var newSceneryPalette = secondaryPalette.Fields.Where(x => x.DisplayName.Contains("scenery palette")).FirstOrDefault();
+                        if (newSceneryPalette != null)
+                        {
+                            GetVariantListIndexes(newSceneryPalette, runtimeScenery);
+                        }
+                        else
+                        {
+                            Console.WriteLine("Scenery Palette not found");
+                        }
+
+                        //Randomize scenery variants
+                        TagField sceneries = GetScenery(secondaryPalette);
+                        if (sceneries == null)
+                        {
+                            Console.WriteLine("Sceneries is null");
+                            return;
+                        }
+                        foreach (var scenery in ((Bungie.Tags.TagFieldBlock)sceneries).Elements)
+                        {
+                            //only randomize variants that hold weapons/equipment
+                            if (runtimeScenery.Any(x => x.PaletteIndex == GetElementTypeIndex(scenery)))
+                            {
+                                var sceneryVariantList = runtimeScenery.First(x => x.PaletteIndex == GetElementTypeIndex(scenery));
+                                var randomVariant = sceneryVariantList.Variants[rand.Next(0, runtimeScenery.Count)];
+                                SetVariant(scenery, rand, randomVariant);
+                            }
+                        }
+                        secondaryPalette.Save();
+                    }
+
+
+                    var cratefile = Bungie.Tags.TagPath.FromPathAndType(levelpath2, "*cen");
+                    using (var secondaryPalette = new Bungie.Tags.TagFile(cratefile))
+                    {
+                        var newCratePalette = secondaryPalette.Fields.Where(x => x.DisplayName.Contains("crate palette")).FirstOrDefault();
+                        if (newCratePalette != null)
+                        {
+                            GetVariantListIndexes(newCratePalette, runtimeCrates);
+                        }
+                        else
+                        {
+                            Console.WriteLine("Crate Palette not found");
+                        }
+
+                        //Randomize crate variants
+                        TagField crates = GetCrates(secondaryPalette);
+                        if (crates == null)
+                        {
+                            Console.WriteLine("crates is null");
+                            return;
+                        }
+                        foreach (var crate in ((Bungie.Tags.TagFieldBlock)crates).Elements)
+                        {
+                            //only randomize variants that hold weapons/equipment
+                            if (runtimeCrates.Any(x => x.PaletteIndex == GetElementTypeIndex(crate)))
+                            {
+                                var crateVariantList = runtimeCrates.First(x => x.PaletteIndex == GetElementTypeIndex(crate));
+                                var randomVariant = crateVariantList.Variants[rand.Next(0, runtimeCrates.Count)];
+                                SetVariant(crate, rand, randomVariant);
+                            }
+                        }
+                        secondaryPalette.Save();
+                    }
 
                     //Get the second weapon palette
 
@@ -185,9 +248,6 @@ namespace ReachTesting
                         ((Bungie.Tags.TagFieldBlock)equipment).RemoveAllElements();
                         ((Bungie.Tags.TagFieldBlock)character).RemoveAllElements();
                         ((Bungie.Tags.TagFieldBlock)vehicle).RemoveAllElements();
-
-
-
                     }
 
                     
@@ -260,9 +320,9 @@ namespace ReachTesting
                             {
                                 //0.1 chance to have a vehicle
                                 bool shouldHaveVehicle = rand.Next(0, 30) == 0;
-                                bool shouldSpawnHunter = rand.Next(0, 20) == 0;
-                                bool shouldSpawnEngineer = rand.Next(0, 20) == 0;
-                                bool shouldSpawnMule = rand.Next(0, 80) == 0;
+                                bool shouldSpawnHunter = rand.Next(0, 30) == 0;
+                                bool shouldSpawnEngineer = rand.Next(0, 30) == 0;
+                                bool shouldSpawnMule = rand.Next(0, 100) == 0;
 
                                 //Get the normal difficulty count
                                 var normalDiffCountOfCell = GetNormalDiffCountOfCell(cell);
@@ -497,66 +557,16 @@ namespace ReachTesting
                                             i++;
                                         }
                                     }
-
-
                                 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
                             }
                         }
 
-
-
-
-
                     }
 
-
-
-
-
-
-
                     tagFile.Save();
-
                 }
-
-
-
-
-
             }
             Bungie.ManagedBlamSystem.Stop();
         }
-
-        
-
-
-
-
-       
-
-       
     }
-    
-    
 }
