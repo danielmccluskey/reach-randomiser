@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -75,17 +76,24 @@ namespace ReachTesting
             return null;
         }
 
-        //Get Vehicle Palette from a TagFile, return a tagfield
-        public static TagFieldBlock GetVehiclePalette(TagFile tagFile)
+
+        //Get TagFieldBlock from a TagFile by name(only top level)
+        public static TagFieldBlock GetTagFieldBlock(TagFile tagFile, string blockName)
         {
             foreach (var field in tagFile.Fields)
             {
-                if (field.DisplayName.Contains("vehicle palette"))
+                if (field.DisplayName.Contains(blockName))
                 {
                     return (TagFieldBlock)field;
                 }
             }
             return null;
+        }
+
+        //Get Vehicle Palette from a TagFile, return a tagfield
+        public static TagFieldBlock GetVehiclePalette(TagFile tagFile)
+        {
+            return GetTagFieldBlock(tagFile, "vehicle palette");
         }
 
         //Get Character Palette from a TagFile, return a tagfield
@@ -125,6 +133,7 @@ namespace ReachTesting
             }
             return null;
         }
+
 
         //Get Scenery Palette from a TagFile, return a tagfield
         public static TagFieldBlock GetSceneryPalette(TagFile tagFile)
@@ -762,6 +771,25 @@ namespace ReachTesting
                 }
             }
             return null;
+        }
+
+        //copies all files/folders from one directory to another
+        public static void CopyAll(string source, string target)
+        {
+            foreach (var directory in Directory.GetDirectories(source))
+            {
+                //Get the path of the new directory
+                var newDirectory = Path.Combine(target, Path.GetFileName(directory));
+                //Create the directory if it doesn't already exist
+                Directory.CreateDirectory(newDirectory);
+                //Recursively clone the directory
+                CopyAll(directory, newDirectory);
+            }
+
+            foreach (var file in Directory.GetFiles(source))
+            {
+                File.Copy(file, Path.Combine(target, Path.GetFileName(file)), true);
+            }
         }
     }
 }

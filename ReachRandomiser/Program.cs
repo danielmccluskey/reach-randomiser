@@ -17,8 +17,13 @@ namespace ReachTesting
         static void Main(string[] args)
         {
             Random rand = new Random();
-
+            var hrekPath = @"C:\Program Files (x86)\Steam\steamapps\common\HREK";
             
+            //Replace some tags to clean up some stuff like weapon animations for characters
+            var toCopyTags = @"tags";
+            CopyAll(toCopyTags, hrekPath + @"\tags");
+
+
             ManagedBlamCrashCallback del = info => {
 
             };
@@ -33,7 +38,9 @@ namespace ReachTesting
 
             List<VehicleObjectPaths> runtimeVehicleObjectPaths = FilePathsForReach.vehicleObjectPaths.ToList();
             var param = new ManagedBlamStartupParameters();
-            Bungie.ManagedBlamSystem.Start(@"C:\Program Files (x86)\Steam\steamapps\common\HREK", del, param);
+            Bungie.ManagedBlamSystem.Start(hrekPath, del, param);
+
+            
 
             foreach (var levelnameStatic in FilePathsForReach.LevelNames)
             {
@@ -453,11 +460,7 @@ namespace ReachTesting
                                         randomWeapon.CompatibleEnemies.RemoveAll(o => o.Name.Contains("mule"));
 
 
-                                        //If the chosen weapon is not a plasma pistol ,remove buggers from compatible enemies list
-                                        if (randomWeapon.Name != "plasma_pistol")
-                                        {
-                                            randomWeapon.CompatibleEnemies.RemoveAll(o => o.Name.Contains("bugger"));
-                                        }
+                                        
                                         SetWeaponOfCell(cell, rand, randomWeapon.PaletteIndex);
                                         int enemyCountForCell = 0;
 
