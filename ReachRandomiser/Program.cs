@@ -131,74 +131,11 @@ namespace ReachTesting
                     
                     
                     var sceneryfile = Bungie.Tags.TagPath.FromPathAndType(levelpath2, "*cen");
-                    using (var secondaryPalette = new Bungie.Tags.TagFile(sceneryfile))
-                    {
-                        var newSceneryPalette = secondaryPalette.Fields.Where(x => x.DisplayName.Contains("scenery palette")).FirstOrDefault();
-                        if (newSceneryPalette != null)
-                        {
-                            GetVariantListIndexes(newSceneryPalette, runtimeScenery);
-                        }
-                        else
-                        {
-                            Console.WriteLine("Scenery Palette not found");
-                        }
-
-                        //Randomize scenery variants
-                        TagField sceneries = GetScenery(secondaryPalette);
-                        if (sceneries == null)
-                        {
-                            Console.WriteLine("Sceneries is null");
-                            return;
-                        }
-                        foreach (var scenery in ((Bungie.Tags.TagFieldBlock)sceneries).Elements)
-                        {
-                            //only randomize variants that hold weapons/equipment
-                            if (runtimeScenery.Any(x => x.PaletteIndex == GetElementTypeIndex(scenery)))
-                            {
-                                var sceneryVariantList = runtimeScenery.First(x => x.PaletteIndex == GetElementTypeIndex(scenery));
-                                var randomVariant = sceneryVariantList.Variants[rand.Next(0, runtimeScenery.Count)];
-                                SetVariant(scenery, rand, randomVariant);
-                            }
-                        }
-                        secondaryPalette.Save();
-                    }
+                    RandomizeVariants(sceneryfile, "scenery", SceneryVariants, rand);
 
 
                     var cratefile = Bungie.Tags.TagPath.FromPathAndType(levelpath2, "*cen");
-                    using (var secondaryPalette = new Bungie.Tags.TagFile(cratefile))
-                    {
-                        var newCratePalette = secondaryPalette.Fields.Where(x => x.DisplayName.Contains("crate palette")).FirstOrDefault();
-                        if (newCratePalette != null)
-                        {
-                            GetVariantListIndexes(newCratePalette, runtimeCrates);
-                        }
-                        else
-                        {
-                            Console.WriteLine("Crate Palette not found");
-                        }
-
-                        //Randomize crate variants
-                        TagField crates = GetCrates(secondaryPalette);
-                        if (crates == null)
-                        {
-                            Console.WriteLine("crates is null");
-                            return;
-                        }
-                        foreach (var crate in ((Bungie.Tags.TagFieldBlock)crates).Elements)
-                        {
-                            //only randomize variants that hold weapons/equipment
-                            if (runtimeCrates.Any(x => x.PaletteIndex == GetElementTypeIndex(crate)))
-                            {
-                                var crateVariantList = runtimeCrates.First(x => x.PaletteIndex == GetElementTypeIndex(crate));
-                                var randomVariant = crateVariantList.Variants[rand.Next(0, runtimeCrates.Count)];
-                                SetVariant(crate, rand, randomVariant);
-                            }
-                        }
-                        secondaryPalette.Save();
-                    }
-
-                    //Get the second weapon palette
-
+                    RandomizeVariants(cratefile, "crate", runtimeCrates, rand);
 
 
                     //Get Pallettes
@@ -474,7 +411,6 @@ namespace ReachTesting
                                             {
                                                 //Couldn't find the enemy count so randomise it
                                                 enemyCountForCell = rand.Next(1, 4);
-
                                             }
                                             else
                                             {
@@ -563,9 +499,7 @@ namespace ReachTesting
                                 }
                             }
                         }
-
                     }
-
                     tagFile.Save();
                 }
             }

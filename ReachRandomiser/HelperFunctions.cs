@@ -11,83 +11,60 @@ namespace ReachTesting
 {
     internal partial class Program
     {
+        //Get TagFieldBlock from a TagFile by name(only top level)
+        public static TagFieldBlock GetTagFieldBlock(TagFile tagFile, string blockName)
+        {
+            var field = tagFile.Fields.Where(x => x.DisplayName.ToLower().Contains(blockName)).FirstOrDefault();
+            if (field != null)
+            {
+                return (TagFieldBlock)field;
+
+            }
+            return null;
+        }
+
+
+        //Get TagField from a TagFile by name(only top level)
+        public static TagField GetTagField(TagFile tagFile, string fieldName)
+        {
+            var field = tagFile.Fields.Where(x => x.DisplayName.ToLower().Contains(fieldName)).FirstOrDefault();
+            if (field != null)
+            {
+                return (TagField)field;
+
+            }
+            return null;
+        }
+
+
         //Get Squads from a TagFile, return a tagfield
         public static TagField GetSquads(TagFile tagFile)
         {
-            foreach (var field in tagFile.Fields)
-            {
-                if (field.DisplayName == "squads")
-                {
-                    return field;
-                }
-            }
-            return null;
+            return GetTagField(tagFile, "squads");
         }
 
         //Get Equipment from a TagFile, return a tagfield
         public static TagField GetEquipment(TagFile tagFile)
         {
-            foreach (var field in tagFile.Fields)
-            {
-                if (field.DisplayName == "equipments")
-                {
-                    return field;
-                }
-            }
-            return null;
+            return GetTagField(tagFile, "equipments");
         }
 
         //Get Weapons from a TagFile, return a tagfield
         public static TagField GetWeapons(TagFile tagFile)
         {
-            foreach (var field in tagFile.Fields)
-            {
-                if (field.DisplayName == "weapons")
-                {
-                    return field;
-                }
-            }
-            return null;
+            return GetTagField(tagFile, "weapons");
         }
 
-        //Get Weapons from a TagFile, return a tagfield
+        //Get Scenery from a TagFile, return a tagfield
         public static TagField GetScenery(TagFile tagFile)
         {
-            foreach (var field in tagFile.Fields)
-            {
-                if (field.DisplayName == "scenerys")
-                {
-                    return field;
-                }
-            }
-            return null;
+            return GetTagFieldBlock(tagFile, "scenerys");
         }
 
-        //Get Weapons from a TagFile, return a tagfield
+        //Get Crates from a TagFile, return a tagfield
         public static TagField GetCrates(TagFile tagFile)
         {
-            foreach (var field in tagFile.Fields)
-            {
-                if (field.DisplayName == "crates")
-                {
-                    return field;
-                }
-            }
-            return null;
-        }
-
-
-        //Get TagFieldBlock from a TagFile by name(only top level)
-        public static TagFieldBlock GetTagFieldBlock(TagFile tagFile, string blockName)
-        {
-            foreach (var field in tagFile.Fields)
-            {
-                if (field.DisplayName.Contains(blockName))
-                {
-                    return (TagFieldBlock)field;
-                }
-            }
-            return null;
+            return GetTagFieldBlock(tagFile, "crates");
         }
 
         //Get Vehicle Palette from a TagFile, return a tagfield
@@ -99,66 +76,32 @@ namespace ReachTesting
         //Get Character Palette from a TagFile, return a tagfield
         public static TagFieldBlock GetCharacterPalette(TagFile tagFile)
         {
-            var tag = tagFile.Fields.Where(x => x.DisplayName.ToLower().Contains("character palette")).FirstOrDefault();
-            if (tag != null)
-            {
-                return (TagFieldBlock)tag;
-
-            }
-            return null;
+            return GetTagFieldBlock(tagFile, "character palette");
         }
 
         //Get Weapon Palette from a TagFile, return a tagfield
         public static TagFieldBlock GetWeaponPalette(TagFile tagFile)
         {
-            foreach (var field in tagFile.Fields)
-            {
-                if (field.DisplayName.Contains("weapon palette"))
-                {
-                    return (TagFieldBlock)field;
-                }
-            }
-            return null;
+            return GetTagFieldBlock(tagFile, "weapon palette");
         }
 
         //Get Equipment Palette from a TagFile, return a tagfield
         public static TagFieldBlock GetEquipmentPalette(TagFile tagFile)
         {
-            foreach (var field in tagFile.Fields)
-            {
-                if (field.DisplayName.Contains("equipment palette"))
-                {
-                    return (TagFieldBlock)field;
-                }
-            }
-            return null;
+            return GetTagFieldBlock(tagFile, "equipment palette");
         }
 
 
         //Get Scenery Palette from a TagFile, return a tagfield
         public static TagFieldBlock GetSceneryPalette(TagFile tagFile)
         {
-            foreach (var field in tagFile.Fields)
-            {
-                if (field.DisplayName.Contains("scenery palette"))
-                {
-                    return (TagFieldBlock)field;
-                }
-            }
-            return null;
+            return GetTagFieldBlock(tagFile, "scenery palette");
         }
 
         //Get Crate Palette from a TagFile, return a tagfield
         public static TagFieldBlock GetCratePalette(TagFile tagFile)
         {
-            foreach (var field in tagFile.Fields)
-            {
-                if (field.DisplayName.Contains("crate palette"))
-                {
-                    return (TagFieldBlock)field;
-                }
-            }
-            return null;
+            return GetTagFieldBlock(tagFile, "crate palette");
         }
 
         //Add characters to a palette
@@ -534,32 +477,33 @@ namespace ReachTesting
                         }
                     }
 
-
-
                 }
                 else
                 {
                     Console.WriteLine("Template not found: " + template);
                 }
 
-
             }
             return false;
+        }
 
+        //Set the type of an object (ie weapon or scenery) in the world to a given index
+        public static void SetType(TagElement objectElement, Random rand, int PaletteIndex)
+        {
+            //Get type field from elements[0]
+            var typeField = ((Bungie.Tags.TagElement)objectElement).Fields.Where(x => x.DisplayName == "type").FirstOrDefault();
+            if (typeField != null)
+            {
+                //Set the type to the random shortblockindex
+                ((TagFieldBlockIndex)typeField).Value = (short)PaletteIndex;
+            }
         }
 
 
          //Set the weapon type of a weapon placed in the world (not weapon crates)
         public static void SetWeapon(TagElement weapon, Random rand, int PaletteIndex)
         {
-            //Get weapon type field from elements[0]
-            var weaponType = ((Bungie.Tags.TagElement)weapon).Fields.Where(x => x.DisplayName == "type").FirstOrDefault();
-            if (weaponType != null)
-            {
-                //Set the weapon type to the random weapon shortblockindex
-                ((TagFieldBlockIndex)weaponType).Value = (short)PaletteIndex;
-
-            }
+            SetType(weapon, rand, PaletteIndex);
             //clear weapon ammo so it goes to default values
             TagFieldStruct weaponData;
             weaponData = (TagFieldStruct)((Bungie.Tags.TagElement)weapon).Fields.Where(x => x.DisplayName == "weapon data").FirstOrDefault();
@@ -582,18 +526,11 @@ namespace ReachTesting
             }
         }
 
+        
         //Set the equipment type of equipment in the world (not equipment crates)
         public static void SetEquipment(TagElement equipment, Random rand, int PaletteIndex)
         {
-            //Get equipment type field from elements[0]
-            var equipmentType = ((Bungie.Tags.TagElement)equipment).Fields.Where(x => x.DisplayName == "type").FirstOrDefault();
-            if (equipmentType != null)
-            {
-                
-                //Set the equipment type to the random equipment shortblockindex
-                ((TagFieldBlockIndex)equipmentType).Value = (short)PaletteIndex;
-
-            }
+            SetType(equipment, rand, PaletteIndex);
         }
 
         //Set the variant of a tag element
@@ -778,9 +715,7 @@ namespace ReachTesting
         {
             foreach (var directory in Directory.GetDirectories(source))
             {
-                //Get the path of the new directory
                 var newDirectory = Path.Combine(target, Path.GetFileName(directory));
-                //Create the directory if it doesn't already exist
                 Directory.CreateDirectory(newDirectory);
                 //Recursively clone the directory
                 CopyAll(directory, newDirectory);
@@ -789,6 +724,42 @@ namespace ReachTesting
             foreach (var file in Directory.GetFiles(source))
             {
                 File.Copy(file, Path.Combine(target, Path.GetFileName(file)), true);
+            }
+        }
+
+        //Takes an object category (ie scenery, crates) and randomizes certain types into certain variants 
+        public static void RandomizeVariants(TagPath tagPath, string objectCategory, List<VariantList> runTimeVariantsList, Random rand)
+        {
+            using (var tagFile = new Bungie.Tags.TagFile(tagPath))
+            {
+                var newPalette = tagFile.Fields.Where(x => x.DisplayName.Contains(objectCategory + " palette")).FirstOrDefault();
+                if (newPalette != null)
+                {
+                    GetVariantListIndexes(newPalette, runTimeVariantsList);
+                }
+                else
+                {
+                    Console.WriteLine("Palette not found");
+                }
+
+                //Randomize variants
+                TagField objectField = GetTagField(tagFile, objectCategory + "s");
+                if (objectField == null)
+                {
+                    Console.WriteLine("objectsField is null");
+                    return;
+                }
+                foreach (var objectFieldBlock in ((Bungie.Tags.TagFieldBlock)objectField).Elements)
+                {
+                    //only randomize desired variants
+                    if (runTimeVariantsList.Any(x => x.PaletteIndex == GetElementTypeIndex(objectFieldBlock)))
+                    {
+                        var sceneryVariantList = runTimeVariantsList.First(x => x.PaletteIndex == GetElementTypeIndex(objectFieldBlock));
+                        var randomVariant = sceneryVariantList.Variants[rand.Next(0, runTimeVariantsList.Count)];
+                        SetVariant(objectFieldBlock, rand, randomVariant);
+                    }
+                }
+                tagFile.Save();
             }
         }
     }
