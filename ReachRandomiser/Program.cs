@@ -57,89 +57,27 @@ namespace ReachTesting
                 var test_path = Bungie.Tags.TagPath.FromPathAndType(levelpath, "scnr*");
                 using (var tagFile = new Bungie.Tags.TagFile(test_path))
                 {
+                    //first update palettes of resource files
                     var vehiclefile = Bungie.Tags.TagPath.FromPathAndType(levelpath2, "*ehi");
-                    using (var secondaryPalette = new Bungie.Tags.TagFile(vehiclefile))
-                    {
-                        var newVehiclePalette = secondaryPalette.Fields.Where(x => x.DisplayName.Contains("vehicle palette")).FirstOrDefault();
-                        if (newVehiclePalette != null)
-                        {
-                            AddVehiclesToPalette(newVehiclePalette, runtimeVehicleObjectPaths);
-                        }
-
-                        secondaryPalette.Save();
-
-                    }
+                    AddVehiclesToTag(vehiclefile, runtimeVehicleObjectPaths);
 
                     var weaponfile = Bungie.Tags.TagPath.FromPathAndType(levelpath2, "*eap");
-                    using (var secondaryPalette = new Bungie.Tags.TagFile(weaponfile))
-                    {
-                        var newWeaponPalette = secondaryPalette.Fields.Where(x => x.DisplayName.Contains("weapon palette")).FirstOrDefault();
-                        if (newWeaponPalette != null)
-                        {
-                            AddWeaponsToPalette(newWeaponPalette, runtimeWeapons);
-                        }
-                        
-                        //Randomize weapons (not ones held by ai)
-                        TagField weapons = GetWeapons(secondaryPalette);
-                        if (weapons == null)
-                        {
-                            Console.WriteLine("Weapons is null");
-                            return;
-                        }
-                        foreach (var weapon in ((Bungie.Tags.TagFieldBlock)weapons).Elements)
-                        {
-                            var randomWeapon = runtimeWeapons[rand.Next(0, runtimeWeapons.Count)];
-                            SetWeapon(weapon, rand, randomWeapon.PaletteIndex);
-                        }
-                        
-
-                        secondaryPalette.Save();
-
-                    }
-                    
+                    AddWeaponsToTag(weaponfile, runtimeWeapons);
+                    RandomizeWeapons(weaponfile, runtimeWeapons, rand);
+ 
                     var equipmentfile = Bungie.Tags.TagPath.FromPathAndType(levelpath2, "*qip");
-                    using (var secondaryPalette = new Bungie.Tags.TagFile(equipmentfile))
-                    {
-                        var newEquipmentPalette = secondaryPalette.Fields.Where(x => x.DisplayName.Contains("equipment palette")).FirstOrDefault();
-                        if (newEquipmentPalette != null)
-                        {
-                            EquipmentToPalette(newEquipmentPalette, runtimeEquipment);
-                        }
-                        else
-                        {
-                            Console.WriteLine("Equipment Palette not found");
-                        }
-
-                        //Randomize equipments (not ones held by ai)
-                        TagField equipments = GetEquipment(secondaryPalette);
-                        if (equipments == null)
-                        {
-                            Console.WriteLine("Equipments is null");
-                            return;
-                        }
-                        foreach (var equipment in ((Bungie.Tags.TagFieldBlock)equipments).Elements)
-                        {
-                            //only randomize armor abilities to other armor abilities
-                            if (runtimeEquipment.Any(x => x.PaletteIndex == GetEquipmentIndex(equipment)))
-                            {
-                                var randomEquipment = runtimeEquipment[rand.Next(0, runtimeEquipment.Count)];
-                                SetEquipment(equipment, rand, randomEquipment.PaletteIndex);
-                            }
-                        }
-                        secondaryPalette.Save();
-                    }
+                    AddEquipmentToTag(equipmentfile, runtimeEquipment);
+                    RandomizeEquipment(equipmentfile, runtimeEquipment, rand);
                     
                     
                     var sceneryfile = Bungie.Tags.TagPath.FromPathAndType(levelpath2, "*cen");
                     RandomizeVariants(sceneryfile, "scenery", SceneryVariants, rand);
-
-
                     var cratefile = Bungie.Tags.TagPath.FromPathAndType(levelpath2, "*cen");
                     RandomizeVariants(cratefile, "crate", runtimeCrates, rand);
+                    //Consider adding randomized device machine variants, for the pioneer_weapons_stash on m30
 
 
                     //Get Pallettes
-
                     TagFieldBlock characterPalette = GetCharacterPalette(tagFile);
                     if (characterPalette == null)
                     {
@@ -158,15 +96,15 @@ namespace ReachTesting
                         Console.WriteLine("Vehicle Palette is null");
                         return;
                     }
-                    //Add the vehicles to the palette
+
                     //Add the characters to the palette
                     AddCharactersToPalette(characterPalette, runtimeEnemyObjects);
                     //Add the weapons to the palette
-
                     AddWeaponsToPalette(weaponPalette, runtimeWeapons);
-
+                    //Add the vehicles to the palette
                     AddVehiclesToPalette(vehiclePalette, runtimeVehicleObjectPaths);
 
+                    RandomizeProfiles(tagFile, rand, runtimeWeapons, runtimeEquipment);
 
                     tagFile.Save();
                 }

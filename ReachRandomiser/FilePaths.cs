@@ -123,6 +123,8 @@ namespace ReachTesting
         {
             public string Name { get; set; }
             public string Path { get; set; }
+            public int AmmoMag { get; set; } = 0;
+            public int AmmoTotal {get; set;} = 0;
 
             public int PaletteIndex { get; set; } = -1;
 
@@ -229,27 +231,27 @@ namespace ReachTesting
             //new WeaponDetails{Name = "jackal_shield", Path = @"objects\weapons\melee\jackal_shield\jackal_shield" },
             //new WeaponDetails{Name = "skirmisher_bracers", Path = @"objects\weapons\melee\skirmisher_bracers\skirmisher_bracers" },
             //new WeaponDetails{Name = "unarmed", Path = @"objects\weapons\melee\unarmed\unarmed", CompatibleEnemies = enemyObjectPaths.Where(o => o.Name.Contains("engineer")).ToList() },
-            new WeaponDetails{Name = "magnum", Path = @"objects\weapons\pistol\magnum\magnum", CompatibleEnemies = enemyObjectPaths.ToList() },
-            new WeaponDetails{Name = "needler", Path = @"objects\weapons\pistol\needler\needler", CompatibleEnemies = enemyObjectPaths.ToList()  },
+            new WeaponDetails{Name = "magnum", Path = @"objects\weapons\pistol\magnum\magnum", AmmoMag = 8, AmmoTotal = 24, CompatibleEnemies = enemyObjectPaths.ToList() },
+            new WeaponDetails{Name = "needler", Path = @"objects\weapons\pistol\needler\needler", AmmoMag = 24, AmmoTotal = 72, CompatibleEnemies = enemyObjectPaths.ToList()  },
             new WeaponDetails{Name = "plasma_pistol", Path = @"objects\weapons\pistol\plasma_pistol\plasma_pistol", CompatibleEnemies = enemyObjectPaths.ToList() },
-            new WeaponDetails{Name = "assault_rifle", Path = @"objects\weapons\rifle\assault_rifle\assault_rifle", CompatibleEnemies = enemyObjectPaths.ToList() },
-            new WeaponDetails{Name = "concussion_rifle", Path = @"objects\weapons\rifle\concussion_rifle\concussion_rifle", CompatibleEnemies = enemyObjectPaths.ToList() },
-            new WeaponDetails{Name = "dmr", Path = @"objects\weapons\rifle\dmr\dmr", CompatibleEnemies = enemyObjectPaths.ToList() },
+            new WeaponDetails{Name = "assault_rifle", Path = @"objects\weapons\rifle\assault_rifle\assault_rifle", AmmoMag = 32, AmmoTotal = 160, CompatibleEnemies = enemyObjectPaths.ToList() },
+            new WeaponDetails{Name = "concussion_rifle", Path = @"objects\weapons\rifle\concussion_rifle\concussion_rifle", AmmoMag = 6, AmmoTotal = 18, CompatibleEnemies = enemyObjectPaths.ToList() },
+            new WeaponDetails{Name = "dmr", Path = @"objects\weapons\rifle\dmr\dmr", AmmoMag = 15, AmmoTotal = 45, CompatibleEnemies = enemyObjectPaths.ToList() },
             new WeaponDetails{Name = "focus_rifle", Path = @"objects\weapons\rifle\focus_rifle\focus_rifle", CompatibleEnemies = enemyObjectPaths.ToList() },
-            new WeaponDetails{Name = "grenade_launcher", Path = @"objects\weapons\rifle\grenade_launcher\grenade_launcher", CompatibleEnemies = enemyObjectPaths},
-            new WeaponDetails{Name = "needle_rifle", Path = @"objects\weapons\rifle\needle_rifle\needle_rifle", CompatibleEnemies = enemyObjectPaths.ToList() },
+            new WeaponDetails{Name = "grenade_launcher", Path = @"objects\weapons\rifle\grenade_launcher\grenade_launcher", AmmoMag = 1, AmmoTotal = 16, CompatibleEnemies = enemyObjectPaths},
+            new WeaponDetails{Name = "needle_rifle", Path = @"objects\weapons\rifle\needle_rifle\needle_rifle", AmmoMag = 21, AmmoTotal = 63, CompatibleEnemies = enemyObjectPaths.ToList() },
             new WeaponDetails{Name = "plasma_repeater", Path = @"objects\weapons\rifle\plasma_repeater\plasma_repeater", CompatibleEnemies = enemyObjectPaths.ToList() },
             new WeaponDetails{Name = "plasma_rifle", Path = @"objects\weapons\rifle\plasma_rifle\plasma_rifle", CompatibleEnemies = enemyObjectPaths.ToList() },//Jackals, grunts, elites, skirms
-            new WeaponDetails{Name = "shotgun", Path = @"objects\weapons\rifle\shotgun\shotgun", CompatibleEnemies = enemyObjectPaths.ToList() },
-            new WeaponDetails{Name = "sniper_rifle", Path = @"objects\weapons\rifle\sniper_rifle\sniper_rifle", CompatibleEnemies = enemyObjectPaths.ToList() },
-            new WeaponDetails{Name = "spike_rifle", Path = @"objects\weapons\rifle\spike_rifle\spike_rifle", CompatibleEnemies = enemyObjectPaths.ToList() },
-            new WeaponDetails{Name = "flak_cannon", Path = @"objects\weapons\support_high\flak_cannon\flak_cannon", CompatibleEnemies = enemyObjectPaths.ToList() }, //elites, brutes and grunts
+            new WeaponDetails{Name = "shotgun", Path = @"objects\weapons\rifle\shotgun\shotgun", AmmoMag = 6, AmmoTotal = 18, CompatibleEnemies = enemyObjectPaths.ToList() },
+            new WeaponDetails{Name = "sniper_rifle", Path = @"objects\weapons\rifle\sniper_rifle\sniper_rifle", AmmoMag = 4, AmmoTotal = 12, CompatibleEnemies = enemyObjectPaths.ToList() },
+            new WeaponDetails{Name = "spike_rifle", Path = @"objects\weapons\rifle\spike_rifle\spike_rifle", AmmoMag = 20, AmmoTotal = 120, CompatibleEnemies = enemyObjectPaths.ToList() },
+            new WeaponDetails{Name = "flak_cannon", Path = @"objects\weapons\support_high\flak_cannon\flak_cannon", AmmoMag = 5, AmmoTotal = 20, CompatibleEnemies = enemyObjectPaths.ToList() }, //elites, brutes and grunts
             new WeaponDetails{Name = "plasma_launcher", Path = @"objects\weapons\support_high\plasma_launcher\plasma_launcher", CompatibleEnemies = enemyObjectPaths.ToList() },
-            new WeaponDetails{Name = "rocket_launcher", Path = @"objects\weapons\support_high\rocket_launcher\rocket_launcher", CompatibleEnemies = enemyObjectPaths.ToList() },
+            new WeaponDetails{Name = "rocket_launcher", Path = @"objects\weapons\support_high\rocket_launcher\rocket_launcher", AmmoMag = 2, AmmoTotal = 8, CompatibleEnemies = enemyObjectPaths.ToList() },
             new WeaponDetails{Name = "spartan_laser", Path = @"objects\weapons\support_high\spartan_laser\spartan_laser", CompatibleEnemies = enemyObjectPaths },
             new WeaponDetails{Name = "machinegun_turret_jorge", Path = @"objects\weapons\turret\machinegun_turret_jorge\machinegun_turret_jorge", CompatibleEnemies = enemyObjectPaths.ToList() },
-            new WeaponDetails{Name = "plasma_turret", Path = @"objects\vehicles\covenant\turrets\plasma_turret\weapon\plasma_turret", CompatibleEnemies = enemyObjectPaths.ToList() },
-
+            new WeaponDetails{Name = "plasma_turret", Path = @"objects\vehicles\covenant\turrets\plasma_turret\weapon\plasma_turret\plasma_turret", CompatibleEnemies = enemyObjectPaths.ToList() },
+            new WeaponDetails{Name = "machinegun_turret", Path = @"objects\vehicles\human\turrets\machinegun\weapon\machinegun_turret\machinegun_turret", CompatibleEnemies = enemyObjectPaths.ToList() },
         };
 
         public static List<EquipmentDetails> equipments = new List<EquipmentDetails>()
@@ -368,6 +370,8 @@ namespace ReachTesting
         {
             new VariantList{Name = "weapon_rack", Path = @"objects\gear\human\military\weapon_rack\weapon_rack", Variants = new List<string>(){"empty", "heavy_weapons", "armor_locks", "jetpack", "ar", "ar_frags", "br", "br_frags", "shotgun", "shotgun_frags", "drop_shields", "holograms", "jetpacks", "active_camo", "sprint"}},
             new VariantList{Name = "equipment_case", Path = @"objects\gear\human\military\equipment_case\equipment_case", Variants = new List<string>(){"default", "jetpack_2", "drop_lockup", "sprint_hologram", "drop_hologram", "sprint_lockup", "drop_camo", "lock_hologram", "empty", "lockup"}},
+            new VariantList{Name = "armory_shelf", Path = @"objects\gear\human\military\armory_shelf\armory_shelf", Variants = new List<string>(){"empty", "ar", "ar01", "ar02", "br", "br01", "br02", "shot", "shot01", "shot02", "closed", "shot_dmr_rl"}},
+            new VariantList{Name = "armory_shelf_small", Path = @"objects\gear\human\military\armory_shelf_small\armory_shelf_small,impo", Variants = new List<string>(){"4ar_no_grenade", "4ar_grenade", "4pistol_no_grenade", "4pistol_grenade", "2ar_no_grenade", "2ar_grenade", "2pistol_no_grenade", "2pistol_grenade", "empty", "2br_grenade"}},
         };
 
         public static List<VariantList> CrateVariants = new List<VariantList>()
