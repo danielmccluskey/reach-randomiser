@@ -569,20 +569,18 @@ namespace ReachTesting
         //Get the equipment type palette index of the equipment
         public static int GetEquipmentIndex(TagElement equipment)
         {
-            //Get equipment type field from elements[0]
-            var equipmentType = ((Bungie.Tags.TagElement)equipment).Fields.Where(x => x.DisplayName == "type").FirstOrDefault();
-            if (equipmentType != null)
-            {
-                //Get the equipment type
-                return ((TagFieldBlockIndex)equipmentType).Value;
-            }
-            return -1;
+            return GetElementTypeIndex(equipment);
+        }
+
+        public static int GetWeaponIndex(TagElement weapon)
+        {
+            return GetElementTypeIndex(weapon);
         }
 
         //Get the type palette index of an element (such as scenery or crate)
         public static int GetElementTypeIndex(TagElement element)
         {
-            //Get equipment type field from elements[0]
+            //Get type field from elements[0]
             var typeField = ((Bungie.Tags.TagElement)element).Fields.Where(x => x.DisplayName == "type").FirstOrDefault();
             if (typeField != null)
             {
@@ -793,8 +791,11 @@ namespace ReachTesting
                 }
                 foreach (var weapon in ((Bungie.Tags.TagFieldBlock)weapons).Elements)
                 {
-                    var randomWeapon = runtimeWeapons[rand.Next(0, runtimeWeapons.Count)];
-                    SetWeapon(weapon, rand, randomWeapon.PaletteIndex);
+                    if (runtimeWeapons.Any(x => x.PaletteIndex == GetWeaponIndex(weapon)))
+                    {
+                        var randomWeapon = runtimeWeapons[rand.Next(0, runtimeWeapons.Count)];
+                        SetWeapon(weapon, rand, randomWeapon.PaletteIndex);
+                    }
                 }
                 secondaryPalette.Save();
             }

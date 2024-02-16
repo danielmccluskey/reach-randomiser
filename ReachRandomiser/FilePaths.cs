@@ -249,9 +249,9 @@ namespace ReachTesting
             new WeaponDetails{Name = "plasma_launcher", Path = @"objects\weapons\support_high\plasma_launcher\plasma_launcher", CompatibleEnemies = enemyObjectPaths.ToList() },
             new WeaponDetails{Name = "rocket_launcher", Path = @"objects\weapons\support_high\rocket_launcher\rocket_launcher", AmmoMag = 2, AmmoTotal = 8, CompatibleEnemies = enemyObjectPaths.ToList() },
             new WeaponDetails{Name = "spartan_laser", Path = @"objects\weapons\support_high\spartan_laser\spartan_laser", CompatibleEnemies = enemyObjectPaths },
-            new WeaponDetails{Name = "machinegun_turret_jorge", Path = @"objects\weapons\turret\machinegun_turret_jorge\machinegun_turret_jorge", CompatibleEnemies = enemyObjectPaths.ToList() },
-            new WeaponDetails{Name = "plasma_turret", Path = @"objects\vehicles\covenant\turrets\plasma_turret\weapon\plasma_turret\plasma_turret", CompatibleEnemies = enemyObjectPaths.ToList() },
-            new WeaponDetails{Name = "machinegun_turret", Path = @"objects\vehicles\human\turrets\machinegun\weapon\machinegun_turret\machinegun_turret", CompatibleEnemies = enemyObjectPaths.ToList() },
+            new WeaponDetails{Name = "machinegun_turret_jorge", Path = @"objects\weapons\turret\machinegun_turret_jorge\machinegun_turret_jorge", AmmoMag = 200, AmmoTotal = 200, CompatibleEnemies = enemyObjectPaths.ToList() },
+            new WeaponDetails{Name = "plasma_turret", Path = @"objects\vehicles\covenant\turrets\plasma_turret\weapon\plasma_turret\plasma_turret", AmmoMag = 200, AmmoTotal = 200, CompatibleEnemies = enemyObjectPaths.ToList() },
+            new WeaponDetails{Name = "machinegun_turret", Path = @"objects\vehicles\human\turrets\machinegun\weapon\machinegun_turret\machinegun_turret", AmmoMag = 200, AmmoTotal = 200, CompatibleEnemies = enemyObjectPaths.ToList() },
         };
 
         public static List<EquipmentDetails> equipments = new List<EquipmentDetails>()
