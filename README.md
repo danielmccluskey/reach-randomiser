@@ -5,7 +5,7 @@
 
 # Reach-Randomiser
 
-A dynamic C# console application leveraging managedblam to modify tags in Halo Reach's mod tools, introducing a new dimension of unpredictability by randomizing enemies and their weapons.
+A dynamic C# console application leveraging managedblam to modify tags in Halo Reach's mod tools, introducing a new dimension of unpredictability by randomizing enemies, their weapons, weapons/equipment in the world, and starting weapons/equipment.
 
 # Use of this tool requires knowledge of the Halo Reach Editing Kit
 
