@@ -17,8 +17,13 @@ namespace ReachTesting
         static void Main(string[] args)
         {
             Random rand = new Random();
-
+            var hrekPath = @"C:\Program Files (x86)\Steam\steamapps\common\HREK";
             
+            //Replace some tags to clean up some stuff like weapon animations for characters
+            var toCopyTags = @"tags";
+            CopyAll(toCopyTags, hrekPath + @"\tags");
+
+
             ManagedBlamCrashCallback del = info => {
 
             };
@@ -27,10 +32,15 @@ namespace ReachTesting
             List<EnemyObjectPaths> runtimeGhostEnemyObjects = FilePathsForReach.ghostenemyObjectPaths.ToList();
             List<EnemyObjectPaths> runtimeWraithEnemyObjects = FilePathsForReach.wraithenemyObjectPaths.ToList();
             List<WeaponDetails> runtimeWeapons = FilePathsForReach.weapons.ToList();
+            List<EquipmentDetails> runtimeEquipment = FilePathsForReach.equipments.ToList();
+            List<VariantList> runtimeScenery = FilePathsForReach.SceneryVariants.ToList();
+            List<VariantList> runtimeCrates = FilePathsForReach.CrateVariants.ToList();
 
             List<VehicleObjectPaths> runtimeVehicleObjectPaths = FilePathsForReach.vehicleObjectPaths.ToList();
             var param = new ManagedBlamStartupParameters();
-            Bungie.ManagedBlamSystem.Start(@"C:\Program Files (x86)\Steam\steamapps\common\HREK", del, param);
+            Bungie.ManagedBlamSystem.Start(hrekPath, del, param);
+
+            
 
             foreach (var levelnameStatic in FilePathsForReach.LevelNames)
             {
@@ -42,51 +52,32 @@ namespace ReachTesting
                 string levelpath = @"levels\solo\" + levelname + @"\" + levelname;
                 string levelpath2 = @"levels\solo\" + levelname + @"\resources\" + levelname;
 
-
-
                 // e.g. G:\SteamLibrary\steamapps\common\HREK
 
                 var test_path = Bungie.Tags.TagPath.FromPathAndType(levelpath, "scnr*");
                 using (var tagFile = new Bungie.Tags.TagFile(test_path))
                 {
-
-
-
-
+                    //first update palettes of resource files
                     var vehiclefile = Bungie.Tags.TagPath.FromPathAndType(levelpath2, "*ehi");
-                    using (var secondaryPalette = new Bungie.Tags.TagFile(vehiclefile))
-                    {
-                        var newVehiclePalette = secondaryPalette.Fields.Where(x => x.DisplayName.Contains("vehicle palette")).FirstOrDefault();
-                        if (newVehiclePalette != null)
-                        {
-                            AddVehiclesToPalette(newVehiclePalette, runtimeVehicleObjectPaths);
-                        }
-
-                        secondaryPalette.Save();
-
-                    }
+                    AddVehiclesToTag(vehiclefile, runtimeVehicleObjectPaths);
 
                     var weaponfile = Bungie.Tags.TagPath.FromPathAndType(levelpath2, "*eap");
-                    using (var secondaryPalette = new Bungie.Tags.TagFile(weaponfile))
-                    {
-                        var newWeaponPalette = secondaryPalette.Fields.Where(x => x.DisplayName.Contains("weapon palette")).FirstOrDefault();
-                        if (newWeaponPalette != null)
-                        {
-                            AddWeaponsToPalette(newWeaponPalette, runtimeWeapons);
-                        }
-
-                        secondaryPalette.Save();
-
-                    }
-
-
-
-                    //Get the second weapon palette
-
+                    AddWeaponsToTag(weaponfile, runtimeWeapons);
+                    RandomizeWeapons(weaponfile, runtimeWeapons, rand);
+ 
+                    var equipmentfile = Bungie.Tags.TagPath.FromPathAndType(levelpath2, "*qip");
+                    AddEquipmentToTag(equipmentfile, runtimeEquipment);
+                    RandomizeEquipment(equipmentfile, runtimeEquipment, rand);
+                    
+                    
+                    var sceneryfile = Bungie.Tags.TagPath.FromPathAndType(levelpath2, "*cen");
+                    RandomizeVariants(sceneryfile, "scenery", SceneryVariants, rand);
+                    var cratefile = Bungie.Tags.TagPath.FromPathAndType(levelpath2, "*cen");
+                    RandomizeVariants(cratefile, "crate", runtimeCrates, rand);
+                    //Consider adding randomized device machine variants, for the pioneer_weapons_stash on m30
 
 
                     //Get Pallettes
-
                     TagFieldBlock characterPalette = GetCharacterPalette(tagFile);
                     if (characterPalette == null)
                     {
@@ -105,15 +96,15 @@ namespace ReachTesting
                         Console.WriteLine("Vehicle Palette is null");
                         return;
                     }
-                    //Add the vehicles to the palette
+
                     //Add the characters to the palette
                     AddCharactersToPalette(characterPalette, runtimeEnemyObjects);
                     //Add the weapons to the palette
-
                     AddWeaponsToPalette(weaponPalette, runtimeWeapons);
-
+                    //Add the vehicles to the palette
                     AddVehiclesToPalette(vehiclePalette, runtimeVehicleObjectPaths);
 
+                    RandomizeProfiles(tagFile, rand, runtimeWeapons, runtimeEquipment);
 
                     tagFile.Save();
                 }
@@ -132,15 +123,17 @@ namespace ReachTesting
                     {
                         //Get fields Block:weapon, Block:character, Block:vehicle
                         var weapon = designerZone.Fields.Where(x => x.FieldPathWithoutIndexes.Contains("Block:weapon")).FirstOrDefault();
+                        var equipment = designerZone.Fields.Where(x => x.FieldPathWithoutIndexes.Contains("Block:equipment")).FirstOrDefault();
                         var character = designerZone.Fields.Where(x => x.FieldPathWithoutIndexes.Contains("Block:character")).FirstOrDefault();
                         var vehicle = designerZone.Fields.Where(x => x.FieldPathWithoutIndexes.Contains("Block:vehicle")).FirstOrDefault();
                         ((Bungie.Tags.TagFieldBlock)weapon).RemoveAllElements();
+                        ((Bungie.Tags.TagFieldBlock)equipment).RemoveAllElements();
                         ((Bungie.Tags.TagFieldBlock)character).RemoveAllElements();
                         ((Bungie.Tags.TagFieldBlock)vehicle).RemoveAllElements();
-
-
-
                     }
+
+                    
+
                     TagField squads = GetSquads(tagFile);
                     if (squads == null)
                     {
@@ -208,10 +201,10 @@ namespace ReachTesting
                             foreach (var cell in ((Bungie.Tags.TagFieldBlock)cells).Elements)
                             {
                                 //0.1 chance to have a vehicle
-                                bool shouldHaveVehicle = rand.Next(0, 15) == 0;
-                                bool shouldSpawnHunter = rand.Next(0, 15) == 0;
-                                bool shouldSpawnEngineer = rand.Next(0, 15) == 0;
-                                bool shouldSpawnMule = rand.Next(0, 15) == 0;
+                                bool shouldHaveVehicle = rand.Next(0, 30) == 0;
+                                bool shouldSpawnHunter = rand.Next(0, 30) == 0;
+                                bool shouldSpawnEngineer = rand.Next(0, 30) == 0;
+                                bool shouldSpawnMule = rand.Next(0, 100) == 0;
 
                                 //Get the normal difficulty count
                                 var normalDiffCountOfCell = GetNormalDiffCountOfCell(cell);
@@ -342,11 +335,7 @@ namespace ReachTesting
                                         randomWeapon.CompatibleEnemies.RemoveAll(o => o.Name.Contains("mule"));
 
 
-                                        //If the chosen weapon is not a plasma pistol ,remove buggers from compatible enemies list
-                                        if (randomWeapon.Name != "plasma_pistol")
-                                        {
-                                            randomWeapon.CompatibleEnemies.RemoveAll(o => o.Name.Contains("bugger"));
-                                        }
+                                        
                                         SetWeaponOfCell(cell, rand, randomWeapon.PaletteIndex);
                                         int enemyCountForCell = 0;
 
@@ -360,7 +349,6 @@ namespace ReachTesting
                                             {
                                                 //Couldn't find the enemy count so randomise it
                                                 enemyCountForCell = rand.Next(1, 4);
-
                                             }
                                             else
                                             {
@@ -399,7 +387,7 @@ namespace ReachTesting
                                             //Get the count of the elements
                                             var count = enemyElements.Elements.Count;
                                             //Max enemies in a cell is 8
-                                            if (count >= 8)
+                                            if (count >= 7)
                                             {
                                                 break;
                                             }
@@ -446,66 +434,14 @@ namespace ReachTesting
                                             i++;
                                         }
                                     }
-
-
                                 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
                             }
                         }
-
-
-
-
-
                     }
-
-
-
-
-
-
-
                     tagFile.Save();
-
                 }
-
-
-
-
-
             }
             Bungie.ManagedBlamSystem.Stop();
         }
-
-        
-
-
-
-
-       
-
-       
     }
-    
-    
 }

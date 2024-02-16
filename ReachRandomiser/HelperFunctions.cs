@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Runtime;
 using System.Text;
 using System.Threading.Tasks;
 using Bungie;
@@ -10,55 +12,97 @@ namespace ReachTesting
 {
     internal partial class Program
     {
+        //Get TagFieldBlock from a TagFile by name(only top level)
+        public static TagFieldBlock GetTagFieldBlock(TagFile tagFile, string blockName)
+        {
+            var field = tagFile.Fields.Where(x => x.DisplayName.ToLower().Contains(blockName)).FirstOrDefault();
+            if (field != null)
+            {
+                return (TagFieldBlock)field;
+
+            }
+            return null;
+        }
+
+
+        //Get TagField from a TagFile by name(only top level)
+        public static TagField GetTagField(TagFile tagFile, string fieldName)
+        {
+            var field = tagFile.Fields.Where(x => x.DisplayName.ToLower().Contains(fieldName)).FirstOrDefault();
+            if (field != null)
+            {
+                return (TagField)field;
+
+            }
+            return null;
+        }
+
+
         //Get Squads from a TagFile, return a tagfield
         public static TagField GetSquads(TagFile tagFile)
         {
-            foreach (var field in tagFile.Fields)
-            {
-                if (field.DisplayName == "squads")
-                {
-                    return field;
-                }
-            }
-            return null;
+            return GetTagField(tagFile, "squads");
+        }
+
+        //Get Equipment from a TagFile, return a tagfield
+        public static TagField GetEquipment(TagFile tagFile)
+        {
+            return GetTagField(tagFile, "equipments");
+        }
+
+        //Get Weapons from a TagFile, return a tagfield
+        public static TagField GetWeapons(TagFile tagFile)
+        {
+            return GetTagField(tagFile, "weapons");
+        }
+
+        //Get Scenery from a TagFile, return a tagfield
+        public static TagField GetScenery(TagFile tagFile)
+        {
+            return GetTagFieldBlock(tagFile, "scenerys");
+        }
+
+        //Get Crates from a TagFile, return a tagfield
+        public static TagField GetCrates(TagFile tagFile)
+        {
+            return GetTagFieldBlock(tagFile, "crates");
         }
 
         //Get Vehicle Palette from a TagFile, return a tagfield
         public static TagFieldBlock GetVehiclePalette(TagFile tagFile)
         {
-            foreach (var field in tagFile.Fields)
-            {
-                if (field.DisplayName.Contains("vehicle palette"))
-                {
-                    return (TagFieldBlock)field;
-                }
-            }
-            return null;
+            return GetTagFieldBlock(tagFile, "vehicle palette");
         }
 
         //Get Character Palette from a TagFile, return a tagfield
         public static TagFieldBlock GetCharacterPalette(TagFile tagFile)
         {
-            var tag = tagFile.Fields.Where(x => x.DisplayName.ToLower().Contains("character palette")).FirstOrDefault();
-            if (tag != null)
-            {
-                return (TagFieldBlock)tag;
-
-            }
-            return null;
+            return GetTagFieldBlock(tagFile, "character palette");
         }
 
         //Get Weapon Palette from a TagFile, return a tagfield
         public static TagFieldBlock GetWeaponPalette(TagFile tagFile)
         {
-            foreach (var field in tagFile.Fields)
-            {
-                if (field.DisplayName.Contains("weapon palette"))
-                {
-                    return (TagFieldBlock)field;
-                }
-            }
-            return null;
+            return GetTagFieldBlock(tagFile, "weapon palette");
+        }
+
+        //Get Equipment Palette from a TagFile, return a tagfield
+        public static TagFieldBlock GetEquipmentPalette(TagFile tagFile)
+        {
+            return GetTagFieldBlock(tagFile, "equipment palette");
+        }
+
+
+        //Get Scenery Palette from a TagFile, return a tagfield
+        public static TagFieldBlock GetSceneryPalette(TagFile tagFile)
+        {
+            return GetTagFieldBlock(tagFile, "scenery palette");
+        }
+
+        //Get Crate Palette from a TagFile, return a tagfield
+        public static TagFieldBlock GetCratePalette(TagFile tagFile)
+        {
+            return GetTagFieldBlock(tagFile, "crate palette");
         }
 
         //Add characters to a palette
@@ -202,6 +246,74 @@ namespace ReachTesting
                 }
             }
         }
+
+
+        //Add equipment to a palette
+        public static void EquipmentToPalette(TagField tagField, List<EquipmentDetails> equipmentList)
+        {
+            //Get the elements of the field
+            var tagFieldBlock = (Bungie.Tags.TagFieldBlock)tagField;
+            foreach (var EquipmentType in equipmentList)
+            {
+                bool found = false;
+                foreach (var element in tagFieldBlock.Elements)
+                {
+                    if (element.ElementHeaderText.ToLower().Contains(EquipmentType.Name.ToLower()))
+                    {
+                        found = true;
+                        break;
+                    }
+                }
+
+                if (!found)
+                {
+                    //Get the count of the elements
+                    var count = tagFieldBlock.Elements.Count;
+                    tagFieldBlock.AddElement();
+
+                    //Get the last element
+                    var tag = ((Bungie.Tags.TagFieldBlockElement)tagFieldBlock.Elements[count]);
+                    var tgb = (Bungie.Tags.TagFieldReference)tag.Fields[0];
+
+                    tgb.Path = Bungie.Tags.TagPath.FromPathAndType(EquipmentType.Path, "eqip");
+                    //Add the not found element
+                }
+            }
+            //Loop through and set the palette index
+            foreach (var element in tagFieldBlock.Elements)
+            {
+                foreach (var EquipmentType in equipmentList)
+                {
+                    if (element.ElementHeaderText.ToLower() == EquipmentType.Name.ToLower())
+                    {
+                        EquipmentType.PaletteIndex = element.ElementIndex;
+                        break;
+                    }
+                }
+            }
+        }
+
+
+        //Gets palette indexes of variants of a type of object (scenery, crates) into a variant list
+        public static void GetVariantListIndexes(TagField tagField, List<VariantList> variantList)
+        {
+            //Get the elements of the field
+            var tagFieldBlock = (Bungie.Tags.TagFieldBlock)tagField;
+            //Loop through and set the palette index
+            foreach (var element in tagFieldBlock.Elements)
+            {
+                foreach (var ObjectType in variantList)
+                {
+                    if (element.ElementHeaderText.ToLower() == ObjectType.Name.ToLower())
+                    {
+                        ObjectType.PaletteIndex = element.ElementIndex;
+                        break;
+                    }
+                }
+            }
+        }
+
+       
 
         //Check if a squad element has a template
         public static string HasTemplate(TagElement tagElement)
@@ -366,18 +478,129 @@ namespace ReachTesting
                         }
                     }
 
-
-
                 }
                 else
                 {
                     Console.WriteLine("Template not found: " + template);
                 }
 
-
             }
             return false;
+        }
 
+        //Set the type of an object (ie weapon or scenery) in the world to a given index
+        public static void SetType(TagElement objectElement, Random rand, int PaletteIndex)
+        {
+            //Get type field from elements[0]
+            var typeField = ((Bungie.Tags.TagElement)objectElement).Fields.Where(x => x.DisplayName == "type").FirstOrDefault();
+            if (typeField != null)
+            {
+                //Set the type to the random shortblockindex
+                ((TagFieldBlockIndex)typeField).Value = (short)PaletteIndex;
+            }
+        }
+
+
+         //Set the weapon type of a weapon placed in the world (not weapon crates)
+        public static void SetWeapon(TagElement weapon, Random rand, int PaletteIndex)
+        {
+            SetType(weapon, rand, PaletteIndex);
+            //clear weapon ammo so it goes to default values
+            TagFieldStruct weaponData;
+            weaponData = (TagFieldStruct)((Bungie.Tags.TagElement)weapon).Fields.Where(x => x.DisplayName == "weapon data").FirstOrDefault();
+            if (weaponData != null)
+            {
+                var roundsLeft = ((Bungie.Tags.TagElement)weaponData.Elements.First()).Fields.Where(x => x.DisplayName == "rounds left").FirstOrDefault();
+                if (roundsLeft != null)
+                {
+                    ((TagFieldElementInteger)roundsLeft).Data = 0;
+                }
+                else
+                {
+                    Console.WriteLine("rounds left not found");
+                }
+                var roundsLoaded = ((Bungie.Tags.TagElement)weaponData.Elements.First()).Fields.Where(x => x.DisplayName == "rounds loaded").FirstOrDefault();
+                if (roundsLoaded != null)
+                {
+                    ((TagFieldElementInteger)roundsLoaded).Data = 0;
+                }
+            }
+        }
+
+        
+        //Set the equipment type of equipment in the world (not equipment crates)
+        public static void SetEquipment(TagElement equipment, Random rand, int PaletteIndex)
+        {
+            SetType(equipment, rand, PaletteIndex);
+        }
+
+        //Set the variant of a tag element
+        public static void SetVariant(TagElement element, Random rand, string variantString)
+        {
+            TagFieldStruct permutationData;
+            permutationData = (TagFieldStruct)((Bungie.Tags.TagElement)element).Fields.Where(x => x.DisplayName == "permutation data").FirstOrDefault();
+            var variantName = ((Bungie.Tags.TagElement)permutationData.Elements.First()).Fields.Where(x => x.DisplayName == "variant name").FirstOrDefault();
+            if (variantName != null)
+            {
+                //Set the equipment type to the random equipment shortblockindex
+                ((TagFieldElementStringID)variantName).Data = variantString;
+            }
+            else
+            {
+                Console.WriteLine("variant name field not found");
+            }
+        }
+
+        //Get the variant of a tag element
+        public static string GetVariant(TagElement element)
+        {
+            var variantName = ((Bungie.Tags.TagElement)element).Fields.Where(x => x.DisplayName == "variant name").FirstOrDefault();
+            if (variantName != null)
+            {
+                
+                //Set the equipment type to the random equipment shortblockindex
+                return ((TagFieldElementString)variantName).Data;
+
+            }
+            return null;
+        }
+
+
+        //Get the equipment type palette index of the equipment
+        public static int GetEquipmentIndex(TagElement equipment)
+        {
+            return GetElementTypeIndex(equipment);
+        }
+
+        public static int GetWeaponIndex(TagElement weapon)
+        {
+            return GetElementTypeIndex(weapon);
+        }
+
+        //Get the type palette index of an element (such as scenery or crate)
+        public static int GetElementTypeIndex(TagElement element)
+        {
+            //Get type field from elements[0]
+            var typeField = ((Bungie.Tags.TagElement)element).Fields.Where(x => x.DisplayName == "type").FirstOrDefault();
+            if (typeField != null)
+            {
+                //Get the equipment type
+                return ((TagFieldBlockIndex)typeField).Value;
+            }
+            return -1;
+        }
+
+        //Gets the given name string index of a tag element (such as scenery, weapon, or a crate)
+        public static int GetElementNameIndex(TagElement element)
+        {
+            //Get equipment type field from elements[0]
+            var nameField = ((Bungie.Tags.TagElement)element).Fields.Where(x => x.DisplayName == "name").FirstOrDefault();
+            if (nameField != null)
+            {
+                //Get the equipment type
+                return ((TagFieldBlockIndex)nameField).Value;
+            }
+            return -1;
         }
 
         //Set the initial weapon of a cell with palette index
@@ -497,6 +720,210 @@ namespace ReachTesting
                 }
             }
             return null;
+        }
+
+        //copies all files/folders from one directory to another
+        public static void CopyAll(string source, string target)
+        {
+            foreach (var directory in Directory.GetDirectories(source))
+            {
+                var newDirectory = Path.Combine(target, Path.GetFileName(directory));
+                Directory.CreateDirectory(newDirectory);
+                //Recursively clone the directory
+                CopyAll(directory, newDirectory);
+            }
+
+            foreach (var file in Directory.GetFiles(source))
+            {
+                File.Copy(file, Path.Combine(target, Path.GetFileName(file)), true);
+            }
+        }
+
+        //Takes an object category (ie scenery, crates) and randomizes certain types into certain variants 
+        public static void RandomizeVariants(TagPath tagPath, string objectCategory, List<VariantList> runTimeVariantsList, Random rand)
+        {
+            using (var tagFile = new Bungie.Tags.TagFile(tagPath))
+            {
+                var newPalette = tagFile.Fields.Where(x => x.DisplayName.Contains(objectCategory + " palette")).FirstOrDefault();
+                if (newPalette != null)
+                {
+                    GetVariantListIndexes(newPalette, runTimeVariantsList);
+                }
+                else
+                {
+                    Console.WriteLine("Palette not found");
+                }
+
+                //Randomize variants
+                TagField objectField = GetTagField(tagFile, objectCategory + "s");
+                if (objectField == null)
+                {
+                    Console.WriteLine("objectField is null");
+                    return;
+                }
+                foreach (var objectFieldBlock in ((Bungie.Tags.TagFieldBlock)objectField).Elements)
+                {
+                    //only randomize desired variants (no randomizing jetpack cases to avoid softlock)
+                    //todo: fix to only check the m50 (exodus) jetpacks
+                    if (runTimeVariantsList.Any(x => x.PaletteIndex == GetElementTypeIndex(objectFieldBlock)) && GetVariant(objectFieldBlock) != "jetpack_2")
+                    {
+                        var sceneryVariantList = runTimeVariantsList.First(x => x.PaletteIndex == GetElementTypeIndex(objectFieldBlock));
+                        var randomVariant = sceneryVariantList.Variants[rand.Next(0, runTimeVariantsList.Count)];
+                        SetVariant(objectFieldBlock, rand, randomVariant);
+                    }
+                }
+                tagFile.Save();
+            }
+        }
+
+
+        //randomizes weapons in the world
+        public static void RandomizeWeapons(TagPath weaponfile, List<WeaponDetails> runtimeWeapons, Random rand)
+        {
+            using (var secondaryPalette = new Bungie.Tags.TagFile(weaponfile))
+            {
+                //Randomize weapons (not ones held by ai)
+                TagField weapons = GetWeapons(secondaryPalette);
+                if (weapons == null)
+                {
+                    Console.WriteLine("Weapons is null");
+                    return;
+                }
+                foreach (var weapon in ((Bungie.Tags.TagFieldBlock)weapons).Elements)
+                {
+                    if (runtimeWeapons.Any(x => x.PaletteIndex == GetWeaponIndex(weapon)))
+                    {
+                        var randomWeapon = runtimeWeapons[rand.Next(0, runtimeWeapons.Count)];
+                        SetWeapon(weapon, rand, randomWeapon.PaletteIndex);
+                    }
+                }
+                secondaryPalette.Save();
+            }
+        }
+
+        //Randomizes Equipment in the world
+        public static void RandomizeEquipment(TagPath equipmentfile, List<EquipmentDetails> runtimeEquipment, Random rand)
+        {
+            using (var secondaryPalette = new Bungie.Tags.TagFile(equipmentfile))
+            {
+                var newEquipmentPalette = secondaryPalette.Fields.Where(x => x.DisplayName.Contains("equipment palette")).FirstOrDefault();
+                TagField equipments = GetEquipment(secondaryPalette);
+                if (equipments == null)
+                {
+                    Console.WriteLine("Equipments is null");
+                    return;
+                }
+                foreach (var equipment in ((Bungie.Tags.TagFieldBlock)equipments).Elements)
+                {
+                    //only randomize armor abilities to other armor abilities
+                    if (runtimeEquipment.Any(x => x.PaletteIndex == GetEquipmentIndex(equipment)))
+                    {
+                        var randomEquipment = runtimeEquipment[rand.Next(0, runtimeEquipment.Count)];
+                        SetEquipment(equipment, rand, randomEquipment.PaletteIndex);
+                    }
+                }
+                secondaryPalette.Save();
+            }
+        }
+
+        //Adds all the needed weapons to the weapon palette
+        public static void AddWeaponsToTag(TagPath weaponfile, List<WeaponDetails> runtimeWeapons)
+        {
+            using (var secondaryPalette = new Bungie.Tags.TagFile(weaponfile))
+            {
+                var newWeaponPalette = secondaryPalette.Fields.Where(x => x.DisplayName.Contains("weapon palette")).FirstOrDefault();
+                if (newWeaponPalette != null)
+                {
+                    AddWeaponsToPalette(newWeaponPalette, runtimeWeapons);
+                }
+                secondaryPalette.Save();
+
+            }
+        }
+
+        //Adds all the needed vehicles to the vehicle palette
+        public static void AddVehiclesToTag(TagPath vehiclefile, List<VehicleObjectPaths> runtimeVehicleObjectPaths)
+        {
+            using (var secondaryPalette = new Bungie.Tags.TagFile(vehiclefile))
+            {
+                var newVehiclePalette = secondaryPalette.Fields.Where(x => x.DisplayName.Contains("vehicle palette")).FirstOrDefault();
+                if (newVehiclePalette != null)
+                {
+                    AddVehiclesToPalette(newVehiclePalette, runtimeVehicleObjectPaths);
+                }
+
+                secondaryPalette.Save();
+
+            }
+        }
+
+        //Adds all the needed equipment to the equipment palette
+        public static void AddEquipmentToTag(TagPath equipmentfile, List<EquipmentDetails> runtimeEquipment)
+        {
+            using (var secondaryPalette = new Bungie.Tags.TagFile(equipmentfile))
+            {
+                var newEquipmentPalette = secondaryPalette.Fields.Where(x => x.DisplayName.Contains("equipment palette")).FirstOrDefault();
+                if (newEquipmentPalette != null)
+                {
+                    EquipmentToPalette(newEquipmentPalette, runtimeEquipment);
+                }
+                else
+                {
+                    Console.WriteLine("Equipment Palette not found");
+                }
+                secondaryPalette.Save();
+            }
+        }
+
+        public static void RandomizeProfiles(TagFile scenario, Random rand, List<WeaponDetails> runtimeWeapons, List<EquipmentDetails> runtimeEquipment)
+        {
+            var profiles = scenario.Fields.Where(x => x.DisplayName.Contains("player starting profile")).FirstOrDefault();
+            if (profiles != null)
+            {
+                foreach (var profile  in ((Bungie.Tags.TagFieldBlock)profiles).Elements)
+                {
+                    var primaryType = runtimeWeapons[rand.Next(0, runtimeWeapons.Count)];
+                    var secondaryType = runtimeWeapons[rand.Next(0, runtimeWeapons.Count)];
+                    var equipmentType = runtimeEquipment[rand.Next(0, runtimeEquipment.Count)];
+                    foreach (var field in profile.Fields)
+                    {
+                        
+                        if (field.FieldName == "primary weapon")
+                        {
+                            ((TagFieldReference)field).Path = Bungie.Tags.TagPath.FromPathAndType(primaryType.Path, "weap");
+                        }
+                        else if (field.FieldName == "secondary weapon")
+                        {
+                            ((TagFieldReference)field).Path = Bungie.Tags.TagPath.FromPathAndType(secondaryType.Path, "weap");
+                        }
+                        else if (field.FieldName == "primaryrounds loaded")
+                        {
+                            ((TagFieldElementInteger)field).Data = primaryType.AmmoMag;
+                        }
+                        else if (field.FieldName == "secondaryrounds loaded")
+                        {
+                            ((TagFieldElementInteger)field).Data = secondaryType.AmmoMag;
+                        }
+                        else if (field.FieldName == "primaryrounds total")
+                        {
+                            ((TagFieldElementInteger)field).Data = primaryType.AmmoTotal;
+                        }
+                        else if (field.FieldName == "secondaryrounds total")
+                        {
+                            ((TagFieldElementInteger)field).Data = secondaryType.AmmoTotal;
+                        }
+                        var grenadeValues = new List<string> {"starting fragmentation grenade count", "starting plasma grenade count"};
+                        if (grenadeValues.Contains(field.FieldName, StringComparer.OrdinalIgnoreCase))
+                        {
+                            ((TagFieldElementInteger)field).Data = rand.Next(0, 3);
+                        }
+                        else if (field.FieldName == "starting equipment")
+                        {
+                            ((TagFieldReference)field).Path = Bungie.Tags.TagPath.FromPathAndType(equipmentType.Path, "eqip");
+                        }
+                    }
+                }
+            }
         }
     }
 }

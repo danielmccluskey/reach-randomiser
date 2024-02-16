@@ -12,4 +12,12 @@
     </Reference>
   </ItemGroup>
 
+  <ItemGroup> 
+    <Content Include="tags\**"> 
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory> 
+    </Content> 
+  </ItemGroup>
+
+  
+
 </Project>
