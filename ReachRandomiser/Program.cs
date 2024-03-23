@@ -10,8 +10,6 @@ using System.Xml.Linq;
 using static ReachTesting.FilePathsForReach;
 namespace ReachTesting
 {
-    
-
     internal partial class Program
     {
         static void Main(string[] args)
@@ -40,7 +38,7 @@ namespace ReachTesting
             var param = new ManagedBlamStartupParameters();
             Bungie.ManagedBlamSystem.Start(hrekPath, del, param);
 
-            
+            RandomizeCutscenes(rand);
 
             foreach (var levelnameStatic in FilePathsForReach.LevelNames)
             {
@@ -387,7 +385,7 @@ namespace ReachTesting
                                             //Get the count of the elements
                                             var count = enemyElements.Elements.Count;
                                             //Max enemies in a cell is 8
-                                            if (count >= 7)
+                                            if (count >= 8 || (levelnameStatic == "m30" && count >=4))
                                             {
                                                 break;
                                             }

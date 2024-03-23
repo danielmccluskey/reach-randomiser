@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.IO.Compression;
 using System.Linq;
 using System.Runtime;
 using System.Text;
@@ -922,6 +923,131 @@ namespace ReachTesting
                             ((TagFieldReference)field).Path = Bungie.Tags.TagPath.FromPathAndType(equipmentType.Path, "eqip");
                         }
                     }
+                }
+            }
+        }
+
+        public static TagField GetSceneObjects(TagFile tagFile)
+        {
+            foreach (var field in tagFile.Fields)
+            {
+                if (field.DisplayName == "objects")
+                {
+                    return field;
+                }
+            }
+            return null;
+        }
+
+        public static TagField GetSceneShots(TagFile tagFile)
+        {
+            foreach (var field in tagFile.Fields)
+            {
+                if (field.DisplayName == "shots")
+                {
+                    return field;
+                }
+            }
+            return null;
+        }
+
+        public static TagField GetDialogueFromShot(TagElement shotField)
+        {
+            foreach (var field in shotField.Fields)
+            {
+                if (field.DisplayName == "dialogue")
+                {
+                    return field;
+                }
+            }
+            Console.WriteLine("dialogue not found");
+            return null;
+        }
+
+        public static void RandomizeSceneObjects(TagField objectsField, Random rand)
+        {
+            
+            foreach (var objectElement in ((TagFieldBlock)objectsField).Elements)
+            {
+                string objectTypePath = null;
+                foreach (var field in objectElement.Fields)
+                {
+                    if (field.FieldName == "object type")
+                    {
+
+                        if (((TagFieldReference)field).Path != null)
+                        {
+                            objectTypePath = ((TagFieldReference)field).Path.RelativePath;
+
+                            //randomize heads
+                            //swapping heads seems to not have them display? leaving out for now
+                            /*
+                            if (HeadPaths.Any(x => objectTypePath.Contains(x)))
+                            {
+                                Console.WriteLine("randomizing head");
+                                string randomHeadPath = HeadPaths[rand.Next(0, HeadPaths.Count)];
+                                TagPath randomHead = Bungie.Tags.TagPath.FromPathAndType(randomHeadPath, "biped");
+                                ((TagFieldReference)field).Path = randomHead;
+                                Console.WriteLine("head: "+ ((TagFieldReference)field).Path.RelativePath);
+                            }
+                            */
+                        }
+                    }
+                }
+                
+                if (objectTypePath != null && BipedVariants.Any(x => objectTypePath.Contains(x.Path)))
+                {
+                    foreach (var field in objectElement.Fields)
+                    {
+                        if (field.FieldName == "variant name")
+                        {
+                            var bipedVariantList = BipedVariants.First(x => x.Path == objectTypePath);
+                            var randomVariant = bipedVariantList.Variants[rand.Next(0, bipedVariantList.Variants.Count)];
+                            ((TagFieldElementStringID)field).Data = randomVariant;
+                        }
+                    }
+                }
+
+            }
+        }
+
+        public static void RandomizeDialogue(TagField shotsField, Random rand)
+        {
+            foreach (var shotElement in ((TagFieldBlock)shotsField).Elements)
+            {
+                var dialogueField = GetDialogueFromShot(shotElement);
+                foreach (var dialogueElement in ((TagFieldBlock)dialogueField).Elements)
+                {
+                    Dialogue randomDialogue = DialogueList[rand.Next(0, DialogueList.Count)];
+                    foreach (var field in dialogueElement.Fields)
+                    {
+                        if (field.DisplayName == "dialogue" || field.DisplayName == "female dialogue")
+                        {
+                            TagPath randomDialoguePath = Bungie.Tags.TagPath.FromPathAndType(randomDialogue.Path, "snd!");
+                            ((TagFieldReference)field).Path = randomDialoguePath;
+                        }
+                        if (field.DisplayName == "subtitle" || field.DisplayName == "female subtitle")
+                        {
+                            ((TagFieldElementStringID)field).Data = randomDialogue.Subtitle;
+                        }
+                    }
+                }
+            }
+        }
+
+        public static void RandomizeCutscenes(Random rand)
+        {
+            foreach (var scene in ScenePaths)
+            {
+                var scenePath = Bungie.Tags.TagPath.FromPathAndType(scene, "cisc*");
+                Console.WriteLine("randomizing cutscene: " + scenePath.RelativePath);
+                using (var tagFile = new Bungie.Tags.TagFile(scenePath))
+                {
+                    var sceneObjects = GetSceneObjects(tagFile);
+                    RandomizeSceneObjects(sceneObjects, rand);
+                    var shotObjects = GetSceneShots(tagFile);
+                    RandomizeDialogue(shotObjects, rand);
+                    tagFile.Save();
                 }
             }
         }
