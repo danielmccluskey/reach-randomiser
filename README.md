@@ -10,7 +10,7 @@ A dynamic C# console application leveraging managedblam to modify tags in Halo R
 # Use of this tool requires basic knowledge of the Halo Reach Modding Tools (HREK)
 
 You can use a pre-generated version of this mod using the steam workshop!
-[Steam workshop link](https://steamcommunity.com/sharedfiles/filedetails/?id=3106219376)
+[Steam workshop link](https://steamcommunity.com/sharedfiles/filedetails/?id=3197941875)
 
 ## Installation and Usage
 1. **Extract HREK**: Begin by extracting a fresh copy of `HREK.7z`.
