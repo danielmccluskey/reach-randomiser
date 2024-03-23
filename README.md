@@ -14,7 +14,7 @@ You can use a pre-generated version of this mod using the steam workshop!
 
 ## Installation and Usage
 1. **Extract HREK**: Begin by extracting a fresh copy of `HREK.7z`.
-2. **Run Reach-Randomiser**: Execute the Reach-Randomiser program. If necessary, adjust the default path of your HREK installation in the main function.
+2. **Run Reach-Randomiser**: Execute the Reach-Randomiser program. If necessary, adjust the default path of your HREK installation in the main function (default is C:\Program Files (x86)\Steam\steamapps\common\HREK).
 3. **Package Scenario Files**: Package each scenario file using the provided tools in the HREK (use build-cache-file).
 4. **Enjoy Randomized Maps**: The generated map files will now feature randomized enemies, enhancing the unpredictability and replayability of the game.
 
