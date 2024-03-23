@@ -5,12 +5,18 @@
 
 # Reach-Randomiser
 
-A dynamic C# console application leveraging managedblam to modify tags in Halo Reach's mod tools, introducing a new dimension of unpredictability by randomizing enemies, their weapons, weapons/equipment in the world, and starting weapons/equipment.
+A dynamic C# console application leveraging managedblam to modify tags in Halo Reach's mod tools, introducing a new dimension of unpredictability by randomizing enemies, their weapons, weapons/equipment in the world, and starting weapons/equipment. Some parts of cutscenes are also randomized.
 
-# Use of this tool requires knowledge of the Halo Reach Editing Kit
+# Use of this tool requires basic knowledge of the Halo Reach Modding Tools (HREK)
 
 You can use a pre-generated version of this mod using the steam workshop!
 [Steam workshop link](https://steamcommunity.com/sharedfiles/filedetails/?id=3106219376)
+
+## Installation and Usage
+1. **Extract HREK**: Begin by extracting a fresh copy of `HREK.7z`.
+2. **Run Reach-Randomiser**: Execute the Reach-Randomiser program. If necessary, adjust the default path of your HREK installation in the main function.
+3. **Package Scenario Files**: Package each scenario file using the provided tools in the HREK (use build-cache-file).
+4. **Enjoy Randomized Maps**: The generated map files will now feature randomized enemies, enhancing the unpredictability and replayability of the game.
 
 ## Program Steps
 
@@ -28,13 +34,6 @@ You can use a pre-generated version of this mod using the steam workshop!
 
 - **.NET Framework 4.8**: Ensure you have .NET Framework 4.8 installed on your system.
 - **Halo Reach Editing Kit**: This tool requires the Halo Reach Editing Kit (HREK) to be installed and properly set up.
-
-## Installation and Usage
-
-1. **Extract HREK**: Begin by extracting a fresh copy of `HREK.7z`.
-2. **Run Reach-Randomiser**: Execute the Reach-Randomiser program. If necessary, adjust the default path of your HREK installation in the main function.
-3. **Package Scenario Files**: Package each scenario file using the provided tools in the HREK.
-4. **Enjoy Randomized Maps**: The generated map files will now feature randomized enemies, enhancing the unpredictability and replayability of the game.
 
 ## Roadmap (TODO)
 
